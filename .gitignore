@@ -1,0 +1,19 @@
+# clasp local config (contiene scriptId privado)
+.clasp.json
+
+# Sistema
+.DS_Store
+*.swp
+*.bak
+*~
+
+# Editor
+.vscode/
+.idea/
+
+# Node (si se agrega tooling local)
+node_modules/
+package-lock.json
+
+# Logs
+*.log

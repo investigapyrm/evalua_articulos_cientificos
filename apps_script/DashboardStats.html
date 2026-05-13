@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<base target="_top">
+<?!= include('styles'); ?>
+</head>
+<body>
+
+<header>
+  <h1>Estadísticas — acuerdo humano vs IA y entre humanos</h1>
+  <span class="header-links">
+    <a id="lnkSheet" href="#" target="_blank">📊 Libro</a>
+    <a href="?">← Volver</a>
+  </span>
+</header>
+
+<main style="grid-template-columns: 1fr; height: auto; overflow: auto;">
+  <div id="root">
+    <div class="pdf-empty"><span class="loading"></span></div>
+  </div>
+</main>
+
+<script>
+  google.script.run.withSuccessHandler(url => {
+    document.getElementById('lnkSheet').href = url;
+  }).getURLSheet();
+
+  google.script.run
+    .withSuccessHandler(render)
+    .withFailureHandler(err => alert('Error: ' + err.message))
+    .getEstadisticas();
+
+  function pct(x) { return (x == null) ? '—' : (x * 100).toFixed(1) + '%'; }
+  function num(x) { return (x == null) ? '—' : x.toFixed(3); }
+  function escape_(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function render(s) {
+    if (!s.n) {
+      document.getElementById('root').innerHTML =
+        '<div class="pdf-empty">Aún no se calificó ningún artículo.</div>';
+      return;
+    }
+    const tarjeta = (label, valor, hint) => `
+      <div class="stat-card">
+        <div class="num">${valor}</div>
+        <div class="lbl">${label}</div>
+        ${hint ? '<div style="font-size:11px;color:var(--muted);margin-top:6px;">' + escape_(hint) + '</div>' : ''}
+      </div>`;
+
+    let html = '';
+
+    if (s.comparacionModelos) {
+      const cm = s.comparacionModelos;
+      html += '<h3 style="margin-top:0;">Comparación Codex/GPT · Gemini · Claude · NotebookLM</h3>';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">';
+      cm.cobertura.forEach(m => {
+        const faltan = m.faltantes && m.faltantes.length ? 'Falta: ' + m.faltantes.join(', ') : 'Cobertura completa';
+        html += tarjeta(nombreModelo(m.revisor), m.n + ' PDFs', faltan);
+      });
+      html += tarjeta('Unanimidad 4 modelos', cm.consensoD.unanimidad + ' PDFs',
+                      'sobre ' + cm.comunesTodos + ' PDFs comunes en D');
+      html += '</div>';
+
+      html += '<table class="matriz" style="margin-top:12px;">';
+      html += '<thead><tr><th>Par</th><th>n comunes</th><th>Acuerdo D</th><th>Cohen\\'s κ D</th></tr></thead><tbody>';
+      cm.pares.forEach(p => {
+        html += '<tr><td>' + escape_(nombreModelo(p.revisorA)) + ' ↔ ' + escape_(nombreModelo(p.revisorB)) + '</td>' +
+                '<td>' + p.n + '</td><td>' + pct(p.acuerdoD) + '</td><td>' + num(p.kappaD) + '</td></tr>';
+      });
+      html += '</tbody></table>';
+
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-top:12px;">' +
+              tarjeta('Unanimidad', cm.consensoD.unanimidad, '4 modelos iguales') +
+              tarjeta('Mayoría', cm.consensoD.mayoria, '3 de 4 iguales') +
+              tarjeta('Empate', cm.consensoD.empate, '2 de 4 como máximo') +
+              tarjeta('4 distintos', cm.consensoD.todos_distintos, 'sin mayoría') +
+              '</div>';
+
+      html += '<div style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-top:16px;">';
+      html += '<h3 style="margin:0 0 10px;">Distribución de veredictos D por modelo</h3>';
+      html += renderDistribucionModelos(cm.cobertura, s.labelsD);
+      html += '</div>';
+    }
+
+    // Resumen agregado por revisor
+    html += '<h3 style="margin-top:24px;">Acuerdo revisor vs IA base por revisor</h3>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">';
+    s.porRevisor.forEach(rv => {
+      html += tarjeta(rv.revisor, rv.n + ' calificados',
+                      'A: ' + pct(rv.acuerdoA) + ' · B: ' + pct(rv.acuerdoB) +
+                      ' · C: ' + pct(rv.acuerdoC) + ' · D: ' + pct(rv.acuerdoD) +
+                      ' · κ: ' + num(rv.kappaD));
+    });
+    html += '</div>';
+
+    // Matriz por revisor
+    s.porRevisor.forEach(rv => {
+      html += '<div style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-top:16px;">';
+      html += '<h3 style="margin:0 0 10px;">' + escape_(rv.revisor) + ' vs IA — matriz de confusión sobre D (n=' + rv.n + ')</h3>';
+      html += renderMatriz(rv.matriz, s.labelsD, 'humano', 'IA');
+      html += '</div>';
+    });
+
+    // Kappa entre humanos (pairwise)
+    if (s.kappasHumanos && s.kappasHumanos.length) {
+      html += '<h3 style="margin-top:24px;">Acuerdo entre revisores humanos</h3>';
+      html += '<table class="matriz" style="margin-top:8px;">';
+      html += '<thead><tr><th>Par de revisores</th><th>n PDFs comunes</th><th>Cohen\\'s κ</th></tr></thead><tbody>';
+      s.kappasHumanos.forEach(p => {
+        html += '<tr><td>' + escape_(p.revisorA) + ' ↔ ' + escape_(p.revisorB) + '</td>' +
+                '<td>' + p.n + '</td><td>' + num(p.kappa) + '</td></tr>';
+      });
+      html += '</tbody></table>';
+
+      // Matrices pairwise
+      s.kappasHumanos.forEach(p => {
+        html += '<div style="background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-top:12px;">';
+        html += '<h3 style="margin:0 0 10px;">' + escape_(p.revisorA) + ' (filas) vs ' + escape_(p.revisorB) + ' (columnas)</h3>';
+        html += renderMatriz(p.matriz, s.labelsD, escape_(p.revisorA), escape_(p.revisorB));
+        html += '</div>';
+      });
+    } else if (s.revisores.length >= 2) {
+      html += '<div style="margin-top:16px;font-size:13px;color:var(--muted);">Hay '+s.revisores.length+' revisores pero ningún PDF fue evaluado por más de uno. Cuando haya solapamiento aparecen las kappas pairwise.</div>';
+    }
+
+    html += '<div style="font-size:13px; color:var(--muted); margin-top:24px;">' +
+            'Interpretación de κ (Landis & Koch, 1977): &lt; 0 desacuerdo | 0–0,20 leve | 0,21–0,40 aceptable | ' +
+            '0,41–0,60 moderado | 0,61–0,80 sustancial | 0,81–1,00 casi perfecto.</div>';
+
+    document.getElementById('root').innerHTML = html;
+  }
+
+  function renderMatriz(M, labels, lblFila, lblCol) {
+    let h = '<table class="matriz"><thead><tr><th></th>';
+    labels.forEach(l => h += '<th>' + escape_(l) + '<br><span style="font-size:10px;">(' + escape_(lblCol) + ')</span></th>');
+    h += '</tr></thead><tbody>';
+    for (let i = 0; i < labels.length; i++) {
+      h += '<tr><th>' + escape_(labels[i]) + '<br><span style="font-size:10px;">(' + escape_(lblFila) + ')</span></th>';
+      for (let j = 0; j < labels.length; j++) {
+        const cls = (i === j) ? 'diag' : '';
+        h += '<td class="' + cls + '">' + (M[i][j] || 0) + '</td>';
+      }
+      h += '</tr>';
+    }
+    h += '</tbody></table>';
+    return h;
+  }
+
+  function nombreModelo(x) {
+    return {
+      codex_gpt: 'Codex/GPT',
+      gemini_flash: 'Gemini 2.5 Flash',
+      claude_haiku: 'Claude Haiku',
+      notebooklm: 'NotebookLM'
+    }[x] || x;
+  }
+
+  function renderDistribucionModelos(cobertura, labels) {
+    let h = '<table class="matriz"><thead><tr><th>Modelo</th>';
+    labels.forEach(l => h += '<th>' + escape_(l) + '</th>');
+    h += '</tr></thead><tbody>';
+    cobertura.forEach(m => {
+      h += '<tr><th>' + escape_(nombreModelo(m.revisor)) + '</th>';
+      labels.forEach(l => h += '<td>' + (m.distribucionD[l] || 0) + '</td>');
+      h += '</tr>';
+    });
+    h += '</tbody></table>';
+    return h;
+  }
+</script>
+</body>
+</html>

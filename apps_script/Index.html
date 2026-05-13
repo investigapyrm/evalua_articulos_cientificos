@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<base target="_top">
+<?!= include('styles'); ?>
+</head>
+<body>
+
+<header>
+  <h1>Califica artículos inferenciales — doble ciego</h1>
+  <span class="progreso" id="progreso">cargando…</span>
+  <span class="revisor-label" id="revisorLabel"></span>
+  <span class="header-links">
+    <a href="#" id="lnkRevisores">👥 Revisores</a>
+    <a id="lnkSheet" href="#" target="_blank">📊 Libro</a>
+    <a href="?page=stats" target="_blank">📈 Estadísticas</a>
+    <a href="#" id="lnkCambiarRevisor">cambiar revisor</a>
+  </span>
+</header>
+
+<div id="popoverRevisores" class="popover-revisores" style="display:none;">
+  <div class="popover-head">
+    <b>Revisores activos</b>
+    <a href="#" id="cerrarRevisores">✕</a>
+  </div>
+  <div id="popoverRevisoresBody"><span class="loading"></span> cargando…</div>
+</div>
+
+<main class="main-3col">
+
+  <aside class="lista-panel" id="listaPanel">
+    <div class="lista-toolbar">
+      <input type="search" id="searchPdf" placeholder="Buscar por revista, área, año, título…" />
+      <div class="filtros">
+        <button data-filter="todos" class="active">Todos</button>
+        <button data-filter="pendientes">Pendientes</button>
+        <button data-filter="calificados">Calificados</button>
+        <button data-filter="con_otros">Con otros</button>
+      </div>
+      <div class="acciones-rapidas">
+        <button class="btn-skip-link" id="btnAnterior">← Anterior</button>
+        <button class="btn-skip-link" id="btnSaltar">Saltar →</button>
+      </div>
+    </div>
+    <ul class="lista-pdfs" id="listaPdfs">
+      <li class="lista-loading"><span class="loading"></span> cargando…</li>
+    </ul>
+  </aside>
+
+  <section class="pdf-panel" id="pdfPanel">
+    <div class="pdf-empty">Elegí un artículo de la lista o esperá a que cargue el primer pendiente…</div>
+  </section>
+
+  <section class="form-panel" id="formPanel">
+    <div class="pdf-empty">—</div>
+  </section>
+
+</main>
+
+<div id="debugBar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#fef2f2;border-top:2px solid #b91c1c;padding:8px;font-family:monospace;font-size:12px;color:#7f1d1d;z-index:9999;max-height:30vh;overflow:auto;"></div>
+<script>
+  // Barra de debug: solo se hace visible si hay un error o si la URL trae ?debug=1
+  const _DEBUG_FORCE = /[?&]debug=1/.test(location.search);
+  function _dbg(msg, level) {
+    try {
+      const bar = document.getElementById('debugBar');
+      if (level === 'err' || _DEBUG_FORCE) bar.style.display = 'block';
+      const t = new Date().toLocaleTimeString();
+      const color = level === 'err' ? '#b91c1c' : (level === 'ok' ? '#15803d' : '#1e40af');
+      bar.innerHTML += '<div style="color:' + color + '">[' + t + '] ' + msg + '</div>';
+      bar.scrollTop = bar.scrollHeight;
+    } catch (_) {}
+    if (level === 'err') console.error(msg);
+    else console.log(msg);
+  }
+  window.addEventListener('error', e => _dbg('JS error: ' + e.message + ' (' + e.filename + ':' + e.lineno + ')', 'err'));
+  window.addEventListener('unhandledrejection', e => _dbg('Promise rejection: ' + (e.reason && e.reason.message || e.reason), 'err'));
+
+  const STORAGE_KEY = 'cai_revisor';
+  let actual = null;
+  let yaSubmitido = false;
+  let listaCompleta = [];
+  let filtroActual = 'todos';
+  let busquedaActual = '';
+
+  function getRevisor() { return localStorage.getItem(STORAGE_KEY) || ''; }
+  function setRevisor(n) {
+    localStorage.setItem(STORAGE_KEY, String(n).trim());
+    document.getElementById('revisorLabel').textContent = '👤 ' + n;
+  }
+  function pedirRevisor() {
+    const a = getRevisor();
+    let n = prompt('Identifícate como revisor (nombre corto o iniciales).\nTus calificaciones se guardarán bajo este nombre.', a || '');
+    if (!n || !n.trim()) {
+      if (a) return a;
+      alert('Necesitamos un identificador del revisor.');
+      return pedirRevisor();
+    }
+    n = n.trim();
+    setRevisor(n);
+    return n;
+  }
+
+  document.getElementById('lnkCambiarRevisor').addEventListener('click', e => {
+    e.preventDefault();
+    pedirRevisor();
+    cargarLista();
+  });
+  google.script.run.withSuccessHandler(url => {
+    document.getElementById('lnkSheet').href = url;
+  }).getURLSheet();
+
+  // Popover de revisores
+  function cargarRevisores() {
+    const body = document.getElementById('popoverRevisoresBody');
+    body.innerHTML = '<span class="loading"></span> cargando…';
+    google.script.run
+      .withSuccessHandler(d => {
+        if (!d || !d.revisores || !d.revisores.length) {
+          body.innerHTML = '<div class="popover-vacio">Sin calificaciones todavía.</div>';
+          return;
+        }
+        const yo = (getRevisor() || '').trim();
+        const filas = d.revisores.map(r => {
+          const pct = d.total_pdfs ? (100 * r.pdfs_unicos / d.total_pdfs).toFixed(1) : '0.0';
+          const esYo = r.revisor === yo;
+          return `<tr${esYo ? ' class="es-yo"' : ''}>
+            <td>${esYo ? '👤 ' : ''}${escape_(r.revisor)}</td>
+            <td class="num">${r.n}</td>
+            <td class="num">${r.pdfs_unicos}</td>
+            <td class="num">${pct}%</td>
+            <td class="ts">${escape_(r.ultima || '')}</td>
+          </tr>`;
+        }).join('');
+        body.innerHTML = `
+          <table class="tbl-revisores">
+            <thead>
+              <tr><th>revisor</th><th class="num">filas</th><th class="num">PDFs</th><th class="num">% de ${d.total_pdfs}</th><th>última</th></tr>
+            </thead>
+            <tbody>${filas}</tbody>
+          </table>`;
+      })
+      .withFailureHandler(err => {
+        body.innerHTML = '<div class="popover-vacio" style="color:#b91c1c;">Error: ' + escape_(err && err.message || String(err)) + '</div>';
+      })
+      .getResumenRevisores();
+  }
+  document.getElementById('lnkRevisores').addEventListener('click', e => {
+    e.preventDefault();
+    const pop = document.getElementById('popoverRevisores');
+    const visible = pop.style.display !== 'none';
+    pop.style.display = visible ? 'none' : 'block';
+    if (!visible) cargarRevisores();
+  });
+  document.getElementById('cerrarRevisores').addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('popoverRevisores').style.display = 'none';
+  });
+
+  // Filtros y búsqueda
+  document.querySelectorAll('.filtros button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.filtros button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      filtroActual = b.dataset.filter;
+      renderLista();
+    });
+  });
+  document.getElementById('searchPdf').addEventListener('input', e => {
+    busquedaActual = e.target.value.trim().toLowerCase();
+    renderLista();
+  });
+
+  // Botones siguiente/anterior
+  document.getElementById('btnSaltar').addEventListener('click', () => {
+    if (!actual) return;
+    const visibles = listaVisibles();
+    const idx = visibles.findIndex(x => String(x.pdf_id) === String(actual.pdf_id));
+    const siguiente = visibles[idx + 1] || visibles[0];
+    if (siguiente) cargarPDF(siguiente.pdf_id);
+  });
+  document.getElementById('btnAnterior').addEventListener('click', () => {
+    if (!actual) return;
+    const visibles = listaVisibles();
+    const idx = visibles.findIndex(x => String(x.pdf_id) === String(actual.pdf_id));
+    const anterior = visibles[idx - 1] || visibles[visibles.length - 1];
+    if (anterior) cargarPDF(anterior.pdf_id);
+  });
+
+  function cargarLista() {
+    const rev = getRevisor() || pedirRevisor();
+    setRevisor(rev);
+    document.getElementById('listaPdfs').innerHTML =
+      '<li class="lista-loading"><span class="loading"></span> cargando 346 PDFs…</li>';
+    _dbg('cargarLista() revisor=' + rev);
+    try {
+      google.script.run
+        .withSuccessHandler(d => {
+          try {
+            _dbg('getListaPDFs OK: total=' + (d && d.total) + ' items=' + (d && d.items && d.items.length), 'ok');
+            if (!d || !d.items) {
+              document.getElementById('listaPdfs').innerHTML =
+                '<li class="lista-loading">Respuesta vacía del servidor.</li>';
+              return;
+            }
+            listaCompleta = d.items;
+            document.getElementById('progreso').textContent =
+              d.calificados_por_mi + ' / ' + d.total + ' calificados por ' + d.revisor;
+            renderLista();
+            const primerPendiente = listaCompleta.find(x => !x.yo_califique);
+            if (primerPendiente) cargarPDF(primerPendiente.pdf_id);
+            else if (listaCompleta.length) cargarPDF(listaCompleta[0].pdf_id);
+          } catch (e) {
+            _dbg('Error en handler success: ' + e.message + '\n' + e.stack, 'err');
+          }
+        })
+        .withFailureHandler(err => {
+          _dbg('getListaPDFs FALLO: ' + (err && err.message || String(err)), 'err');
+          document.getElementById('listaPdfs').innerHTML =
+            '<li class="lista-loading" style="color:#b91c1c;">Error al cargar la lista:<br>' +
+            escape_(err && err.message || String(err)) + '</li>';
+        })
+        .getListaPDFs(rev);
+    } catch (e) {
+      _dbg('Error al invocar getListaPDFs: ' + e.message, 'err');
+    }
+  }
+
+  function listaVisibles() {
+    return listaCompleta.filter(x => {
+      if (filtroActual === 'pendientes' && x.yo_califique) return false;
+      if (filtroActual === 'calificados' && !x.yo_califique) return false;
+      if (filtroActual === 'con_otros' && x.eval_otros_count === 0) return false;
+      if (busquedaActual) {
+        const t = (x.pdf_nombre + ' ' + x.revista + ' ' + x.pais + ' ' +
+                   x.macroarea + ' ' + x.anio + ' ' + x.titulo).toLowerCase();
+        if (t.indexOf(busquedaActual) === -1) return false;
+      }
+      return true;
+    });
+  }
+
+  function renderLista() {
+    const visibles = listaVisibles();
+    const ul = document.getElementById('listaPdfs');
+    if (visibles.length === 0) {
+      ul.innerHTML = '<li class="lista-loading">Sin resultados.</li>';
+      return;
+    }
+    const idActual = actual ? String(actual.pdf_id) : '';
+    ul.innerHTML = visibles.map(x => {
+      const cls = [];
+      if (x.yo_califique) cls.push('estado-califique');
+      else if (x.eval_otros_count > 0) cls.push('estado-otros');
+      else cls.push('estado-pendiente');
+      if (String(x.pdf_id) === idActual) cls.push('activo');
+      const ico = x.yo_califique ? '✓' : (x.eval_otros_count > 0 ? '•' : '○');
+      const otros = x.eval_otros_count > 0 ? ' <span class="badge-otros">' + x.eval_otros_count + '</span>' : '';
+      return `<li class="${cls.join(' ')}" data-id="${x.pdf_id}">
+        <span class="lista-ico">${ico}</span>
+        <span class="lista-id">#${x.pdf_id}</span>
+        <span class="lista-info">
+          <span class="lista-rev">${escape_(x.revista || '—')}</span>
+          <span class="lista-meta">${escape_(x.pais || '')} · ${escape_(x.macroarea || '')} · ${escape_(x.anio || '')}</span>
+        </span>
+        ${otros}
+      </li>`;
+    }).join('');
+    ul.querySelectorAll('li[data-id]').forEach(li => {
+      li.addEventListener('click', () => cargarPDF(li.dataset.id));
+    });
+  }
+
+  function cargarPDF(pdfId) {
+    yaSubmitido = false;
+    const rev = getRevisor() || pedirRevisor();
+    document.getElementById('pdfPanel').innerHTML =
+      '<div class="pdf-empty"><span class="loading"></span></div>';
+    document.getElementById('formPanel').innerHTML =
+      '<div class="pdf-empty"><span class="loading"></span></div>';
+    google.script.run
+      .withSuccessHandler(renderPDF)
+      .withFailureHandler(err => alert('Error: ' + err.message))
+      .getPDF(pdfId, rev);
+  }
+
+  function renderPDF(d) {
+    actual = d;
+
+    if (d.fin) {
+      document.getElementById('pdfPanel').innerHTML =
+        '<div class="pdf-empty"><h2>¡Sin pendientes!</h2><p>Calificaste todos los artículos como <b>' + escape_(d.revisor) + '</b>.</p></div>';
+      document.getElementById('formPanel').innerHTML = '';
+      return;
+    }
+
+    if (d.drive_preview_url) {
+      document.getElementById('pdfPanel').innerHTML =
+        '<iframe src="' + d.drive_preview_url + '" allow="autoplay"></iframe>';
+    } else {
+      document.getElementById('pdfPanel').innerHTML =
+        '<div class="pdf-empty"><p>PDF no encontrado en Drive: <code>' + escape_(d.pdf_nombre) + '</code></p>' +
+        '<button class="btn-skip" onclick="document.getElementById(&quot;btnSaltar&quot;).click();">Saltar →</button></div>';
+    }
+
+    document.getElementById('formPanel').innerHTML = renderForm(d);
+    renderLista(); // refrescar resaltado del activo
+  }
+
+  function renderForm(d) {
+    const aviso = d.eval_otros_count > 0
+      ? '<div class="aviso-otros">📝 Este PDF ya tiene <b>' + d.eval_otros_count +
+        '</b> evaluación(es) previa(s) de: ' + d.eval_otros_revisores.map(escape_).join(', ') +
+        '. Tu evaluación se guarda en paralelo.</div>'
+      : '';
+    const yaCal = d.yo_califique
+      ? '<div class="aviso-yo">⚠️ Ya calificaste este PDF antes. Si volvés a enviar, se agrega una nueva fila (no sobrescribe).</div>'
+      : '';
+
+    return `
+      <h2>Calificación humana</h2>
+      ${aviso}${yaCal}
+      <div class="meta">
+        PDF <b>#${d.pdf_id}</b> · ${escape_(d.revista || '')} · ${escape_(d.pais || '')} · ${escape_(d.macroarea || '')} · ${escape_(d.anio || '')}
+      </div>
+      <div class="titulo">${escape_(d.titulo || d.pdf_nombre)}</div>
+
+      <form id="frm" onsubmit="event.preventDefault(); submitForm();">
+        <fieldset>
+          <legend>A — Muestreo no probabilístico
+            <span class="desc">¿Conveniencia, voluntarios, bola de nieve, intencional, consecutivo?</span></legend>
+          <div class="opts">
+            <label><input type="radio" name="A" value="1" required><span>Sí</span></label>
+            <label><input type="radio" name="A" value="0"><span>No</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>B — Advierte límites del muestreo
+            <span class="desc">¿En cualquier parte del texto reconoce la limitación?</span></legend>
+          <div class="opts">
+            <label><input type="radio" name="B" value="1" required><span>Sí</span></label>
+            <label><input type="radio" name="B" value="0"><span>No</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>C — Extrapola a una población más amplia
+            <span class="desc">¿Generaliza a un país, profesión, grupo etario, etc.?</span></legend>
+          <div class="opts">
+            <label><input type="radio" name="C" value="1" required><span>Sí</span></label>
+            <label><input type="radio" name="C" value="0"><span>No</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>D — Veredicto integral
+            <span class="desc">Tu juicio final. "No evaluable" = el artículo no debió haber sido auditado.</span></legend>
+          <div class="opts" style="flex-direction: column;">
+            <label><input type="radio" name="D" value="FF clasica" required><span>Falla fuerte clásica (no advierten + generalizan)</span></label>
+            <label><input type="radio" name="D" value="FF con reconocimiento"><span>Falla fuerte con reconocimiento (advierten pero generalizan igual)</span></label>
+            <label><input type="radio" name="D" value="Debilidad importante"><span>Debilidad importante</span></label>
+            <label><input type="radio" name="D" value="Sin falla relevante"><span>Sin falla relevante</span></label>
+            <label><input type="radio" name="D" value="No evaluable"><span>No evaluable (este PDF no debió ser auditado)</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Notas (opcional)</legend>
+          <textarea name="notas" placeholder="Justificación o comentarios"></textarea>
+        </fieldset>
+
+        <div class="acciones">
+          <button type="submit" class="btn-primary" id="btnSubmit">Enviar y comparar</button>
+          <button type="button" class="btn-skip" onclick="document.getElementById('btnSaltar').click();">Saltar este →</button>
+        </div>
+      </form>
+
+      <div id="contraste"></div>
+    `;
+  }
+
+  function submitForm() {
+    _dbg('submitForm() invocado');
+    try {
+      if (yaSubmitido) { _dbg('Ya submit en curso, ignoro'); return; }
+      const frm = document.getElementById('frm');
+      if (!frm) { _dbg('No existe #frm', 'err'); return; }
+      if (!actual || !actual.pdf_id) { _dbg('actual.pdf_id vacío: ' + JSON.stringify(actual), 'err'); return; }
+
+      const fd = new FormData(frm);
+      const payload = {
+        pdf_id: actual.pdf_id,
+        revisor: getRevisor(),
+        A: fd.get('A'), B: fd.get('B'), C: fd.get('C'), D: fd.get('D'),
+        notas: fd.get('notas') || ''
+      };
+      _dbg('payload: ' + JSON.stringify(payload));
+
+      if (!payload.revisor) {
+        _dbg('Revisor vacío', 'err'); alert('Falta identificador del revisor.'); return;
+      }
+      if (!payload.A || !payload.B || !payload.C || !payload.D) {
+        _dbg('Campos faltantes: A=' + payload.A + ' B=' + payload.B + ' C=' + payload.C + ' D=' + payload.D, 'err');
+        alert('Completá los 4 campos (A, B, C y D).'); return;
+      }
+
+      yaSubmitido = true;
+      const btn = document.getElementById('btnSubmit');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading"></span> Guardando…';
+      }
+      _dbg('Llamando submitCalificacion...');
+
+      google.script.run
+        .withSuccessHandler(c => {
+          _dbg('submitCalificacion OK', 'ok');
+          try {
+            restaurarBoton(btn);
+            renderContraste(c);
+            google.script.run.withSuccessHandler(d => {
+              if (!d || !d.items) return;
+              listaCompleta = d.items;
+              document.getElementById('progreso').textContent =
+                d.calificados_por_mi + ' / ' + d.total + ' calificados por ' + d.revisor;
+              renderLista();
+            }).withFailureHandler(e => _dbg('Refresh lista FALLO: ' + (e.message || e), 'err'))
+              .getListaPDFs(getRevisor());
+            // Refrescar popover si está visible
+            if (document.getElementById('popoverRevisores').style.display !== 'none') {
+              cargarRevisores();
+            }
+          } catch (e2) {
+            _dbg('Error renderizando contraste: ' + e2.message, 'err');
+          }
+        })
+        .withFailureHandler(err => {
+          const msg = err && err.message || String(err);
+          _dbg('submitCalificacion FALLO: ' + msg, 'err');
+          alert('Error al guardar: ' + msg);
+          yaSubmitido = false;
+          restaurarBoton(btn);
+        })
+        .submitCalificacion(payload);
+    } catch (e) {
+      _dbg('Excepción en submitForm: ' + e.message + '\n' + e.stack, 'err');
+      alert('Excepción inesperada: ' + e.message);
+    }
+  }
+
+  function restaurarBoton(btn) {
+    if (!btn) return;
+    btn.disabled = false;
+    btn.innerHTML = 'Enviar y comparar';
+  }
+
+  function renderContraste(c) {
+    const frm = document.getElementById('frm');
+    if (frm) frm.style.display = 'none';
+    const comparaciones = c.comparaciones || [];
+    const filas = comparaciones.map(r => {
+      const tipo = r.tipo === 'ia_base' ? 'IA base' : (r.tipo === 'modelo' ? 'Modelo' : 'Humano');
+      return `<tr>
+        <td>
+          <b>${escape_(nombreRevisor(r.revisor))}</b>
+          <span>${escape_(tipo)}</span>
+        </td>
+        ${celdaValor(r.A, r.A_match)}
+        ${celdaValor(r.B, r.B_match)}
+        ${celdaValor(r.C, r.C_match)}
+        ${celdaValor(r.D, r.D_match)}
+        <td class="score ${r.coincidencias === 4 ? 'ok' : (r.coincidencias >= 2 ? 'warn' : 'no')}">${r.coincidencias}/4</td>
+      </tr>`;
+    }).join('');
+    document.getElementById('contraste').innerHTML = `
+      <div class="contraste">
+        <h3>Comparación contra IA y revisores · <b>${escape_(getRevisor())}</b></h3>
+        <div class="tu-eval">
+          Tu evaluación: A=<b>${escape_(c.A_humano)}</b> · B=<b>${escape_(c.B_humano)}</b> ·
+          C=<b>${escape_(c.C_humano)}</b> · D=<b>${escape_(c.D_humano)}</b>
+        </div>
+        <table class="comparacion-revisores">
+          <thead>
+            <tr>
+              <th>Referencia</th><th>A</th><th>B</th><th>C</th><th>D</th><th>Coinc.</th>
+            </tr>
+          </thead>
+          <tbody>${filas || '<tr><td colspan="6">Sin comparadores previos.</td></tr>'}</tbody>
+        </table>
+        ${c.motivo_ia ? '<div class="motivo-ia"><b>Motivo IA base:</b> ' + escape_(c.motivo_ia) + '</div>' : ''}
+        <div class="acciones">
+          <button class="btn-primary" onclick="document.getElementById('btnSaltar').click();">Siguiente →</button>
+        </div>
+      </div>`;
+  }
+
+  function celdaValor(v, ok) {
+    return `<td class="${ok ? 'match' : 'mismatch'}"><b>${escape_(v)}</b><span>${ok ? '✓' : '✗'}</span></td>`;
+  }
+
+  function nombreRevisor(r) {
+    return {
+      'IA base': 'IA base',
+      codex_gpt: 'Codex/GPT',
+      gemini_flash: 'Gemini 2.5 Flash',
+      notebooklm: 'NotebookLM',
+      gemini_v2: 'Gemini piloto',
+      claude_haiku: 'Claude Haiku',
+      claude: 'Claude piloto'
+    }[r] || r;
+  }
+
+  function escape_(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  // Arranque
+  try {
+    _dbg('Arranque: DOM cargado, esperando click en revisor');
+    setRevisor(getRevisor() || pedirRevisor());
+    _dbg('Revisor establecido: ' + getRevisor());
+    cargarLista();
+  } catch (e) {
+    _dbg('Error en arranque: ' + e.message, 'err');
+  }
+</script>
+</body>
+</html>

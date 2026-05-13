@@ -1,0 +1,7 @@
+# Solo subir lo que vive en apps_script/ a Google Apps Script
+**/**
+!appsscript.json
+!Code.gs
+!Index.html
+!DashboardStats.html
+!styles.html

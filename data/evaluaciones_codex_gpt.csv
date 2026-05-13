@@ -1,0 +1,347 @@
+pdf_id,A,B,C,D,notas,revisor
+1,0,0,0,No evaluable,No computar en concordancia hasta recuperar texto/PDF articulo completo.,codex_gpt
+2,1,0,1,FF clasica,Prospeccion no probabilistica con lectura regional.,codex_gpt
+3,1,0,1,FF clasica,Inferencia sanitaria territorial desde muestra escolar sin marco probabilistico explicito.,codex_gpt
+4,1,0,1,FF clasica,"Aunque es una base grande, no hay evidencia de diseno probabilistico.",codex_gpt
+5,0,0,0,Sin falla relevante,Censo/registro local; no cae en falla de muestreo no probabilistico.,codex_gpt
+6,1,1,0,Debilidad importante,"Muestreo voluntario, pero extrapolacion limitada y reconocida.",codex_gpt
+7,1,1,0,Debilidad importante,IA parece convertir descripcion microbiologica en inferencia poblacional; no lo veo como A&C.,codex_gpt
+8,1,0,1,FF clasica,Seleccion dirigida de propiedades con lectura regional.,codex_gpt
+9,0,0,0,Sin falla relevante,No debe codificarse como falla de muestreo no probabilistico; es estudio experimental pequeno.,codex_gpt
+10,1,0,1,FF clasica,Aqui discrepo de IA: hay inferencia relacional general sobre vacas desde seleccion no probabilistica.,codex_gpt
+11,1,1,1,FF con reconocimiento,"Aunque hay calculo muestral, la adhesion voluntaria de granjas rompe base probabilistica.",codex_gpt
+12,0,1,1,Debilidad importante,"Hay posible sesgo operativo, pero no A de muestreo no probabilistico.",codex_gpt
+13,0,0,0,Sin falla relevante,Caso retrospectivo clinico; no corresponde A&C aunque haya porcentajes.,codex_gpt
+14,0,0,0,Sin falla relevante,"Estudio animal controlado, no muestreo poblacional.",codex_gpt
+15,0,1,0,Sin falla relevante,Serie clinico-patologica retrospectiva; no A&C.,codex_gpt
+16,0,0,0,Sin falla relevante,Estudio experimental animal; no falla por muestreo poblacional.,codex_gpt
+17,1,0,1,FF clasica,Encuesta seroepidemiologica regional desde muestra no probabilistica.,codex_gpt
+18,1,1,1,FF con reconocimiento,Convenience sample con conclusiones comparativas por pais/genero.,codex_gpt
+19,1,1,0,No evaluable,No deberia integrar denominador auditable como falla A&C; es articulo teorico-interpretativo con datos secundarios/previos.,codex_gpt
+20,0,0,0,Sin falla relevante,Hay muestra aleatoria declarada y alcance local de diseno.,codex_gpt
+21,1,0,1,FF clasica,Encuesta online no probabilistica con perfilamiento de consumidores.,codex_gpt
+22,1,0,1,FF clasica,Muestra pequena no probabilistica con lectura municipal/cadena productiva.,codex_gpt
+23,1,1,0,No evaluable,No es inferencia estadistica poblacional; IA parece penalizar muestreo cualitativo intencional.,codex_gpt
+24,1,1,0,Debilidad importante,"Intervencion local; debilidad posible, pero no A&C fuerte.",codex_gpt
+25,1,0,1,FF clasica,Generaliza eficiencia productiva desde dos unidades seleccionadas.,codex_gpt
+26,1,1,1,FF con reconocimiento,Conveniencia hospitalaria con inferencia regional.,codex_gpt
+27,1,0,1,FF clasica,Lectura regional desde propiedades no probabilisticas.,codex_gpt
+28,0,0,1,Debilidad importante,No cumple A; por tanto no es falla fuerte A&C.,codex_gpt
+29,1,0,1,FF clasica,"Cobertura parcial relevante, pero no probabilistica y con lectura estatal.",codex_gpt
+30,1,0,1,FF clasica,Comparacion inferencial de razas desde animales seleccionados.,codex_gpt
+31,1,0,1,FF clasica,"Intento cercano a censo de asociación, pero la baja respuesta voluntaria introduce autoselección; mantiene inferencia al sistema productivo.",codex_gpt
+32,0,0,0,Sin falla relevante,No corresponde marcar A&C: el problema central no es extrapolación desde muestra no probabilística sino análisis de registros de concursos.,codex_gpt
+33,0,0,0,Sin falla relevante,Diseño experimental animal; no encaja en la falla A&C de encuesta/muestreo humano no probabilístico.,codex_gpt
+34,0,0,0,Sin falla relevante,No hay encuesta o muestreo no probabilístico con extrapolación poblacional.,codex_gpt
+35,1,0,1,FF clasica,No se documenta selección probabilística; los resultados se proyectan a la comunidad facultativa.,codex_gpt
+36,1,1,1,FF con reconocimiento,"Aunque reconoce la limitación de tamaño muestral, sí combina muestra acotada con inferencias/recomendaciones amplias.",codex_gpt
+37,1,1,0,Debilidad importante,"Hay A, pero no veo C suficientemente fuerte para clasificar A&C.",codex_gpt
+38,1,0,1,FF clasica,"La IA lo dejó pasar, pero el texto declara explícitamente muestra no probabilística y generaliza al perfil docente institucional.",codex_gpt
+39,1,0,1,FF clasica,Base local no probabilística con inferencia a desempeño de genotipos; A&C razonable.,codex_gpt
+40,1,0,1,FF clasica,"Aunque usa registros de faena, la inferencia sanitaria se proyecta al área de influencia; la selección depende de animales faenados en ese centro y periodo.",codex_gpt
+41,1,0,1,FF clasica,"Hay cálculo de tamaño muestral, pero no procedimiento probabilístico de selección; las conclusiones se proyectan al cantón.",codex_gpt
+42,1,0,1,FF clasica,Caso mixto con datos de encuesta no probabilística usados para caracterizar población barrial/política pública.,codex_gpt
+43,0,0,0,Sin falla relevante,"Puede tener límites de subregistro, pero no es la falla A&C definida: no hay muestreo no probabilístico de participantes con extrapolación.",codex_gpt
+44,0,0,0,No evaluable,"No aplicable a A&C; Gemini parece haber castigado extrapolación temática, pero el texto incluso advierte límites de representatividad.",codex_gpt
+45,1,1,1,FF con reconocimiento,"Reconoce limitaciones, pero mantiene afirmaciones de efectividad transferibles desde una muestra voluntaria de aula.",codex_gpt
+46,1,1,1,FF con reconocimiento,"Muestra de aula muy localizada con extrapolación pedagógica amplia, aunque se advierten limitaciones.",codex_gpt
+47,1,0,0,Debilidad importante,"Hay muestra escolar no probabilística, pero el encuadre explícito como estudio de caso reduce C; no clasifico A&C fuerte.",codex_gpt
+48,1,0,1,FF clasica,A explícita y conclusiones sobre constructos estudiantiles más allá del grupo intacto.,codex_gpt
+49,1,0,1,FF clasica,El propio método declara búsqueda de generalización pese a cuotas y autoselección.,codex_gpt
+50,1,0,1,FF clasica,Encuesta no probabilística con modelo confirmatorio y extrapolación institucional/regional.,codex_gpt
+51,1,0,1,FF clasica,Muestra empresarial documental no probabilística/por disponibilidad con inferencia sectorial.,codex_gpt
+52,1,0,1,FF clasica,Cinco casos/minas y trabajadores no seleccionados probabilísticamente sostienen conclusiones departamentales.,codex_gpt
+53,1,0,1,FF clasica,Diseño de aula por conveniencia con extrapolación pedagógica fuerte.,codex_gpt
+54,1,0,1,FF clasica,Componente participativo con agricultores seleccionados intencionalmente y recomendaciones productivas generales.,codex_gpt
+55,0,0,0,Sin falla relevante,"Experimento controlado con especies/forrajes, no encuesta o muestra humana no probabilística; las recomendaciones reconocen condiciones similares.",codex_gpt
+56,1,1,1,FF con reconocimiento,"El artículo reconoce que el muestreo por conveniencia afecta representatividad, pero aun así deriva recomendaciones generales.",codex_gpt
+57,1,1,1,FF con reconocimiento,"Reconoce que el muestreo restringe generalización, pero mantiene implicaciones para programa y salud mental infantil.",codex_gpt
+58,0,0,1,Debilidad importante,"Hay extrapolación pedagógica, pero no falla A porque trabaja con censo de la población definida; lo clasifico como no A&C fuerte.",codex_gpt
+59,1,0,1,FF clasica,El componente de campo no probabilístico se usa para sostener inferencias amplias sobre imaginarios territoriales.,codex_gpt
+60,1,1,1,FF con reconocimiento,"Reconoce pocos casos para T3/T4, pero generaliza a la ciudad y norma; A&C fuerte.",codex_gpt
+61,1,1,1,FF con reconocimiento,Falla A&C con reconocimiento de limite: muestra no probabilistica/particular y conclusiones/recomendaciones territoriales sobre comunidades mineras.,codex_gpt
+62,1,1,1,FF con reconocimiento,"Falla A&C con B=1: el articulo reconoce la limitacion, pero sostiene inferencia laboral/organizacional desde muestra no probabilistica.",codex_gpt
+63,0,0,0,Sin falla relevante,No configura A&C: base oficial y diseno muestral institucional.,codex_gpt
+64,1,1,0,Debilidad importante,"Hay muestra institucional, pero no C fuerte: el articulo funciona como estudio de caso/gestion educativa.",codex_gpt
+65,1,0,1,FF clasica,Falla A&C: seleccion espacial no probabilistica/dirigida de hogares y extrapolacion ambiental/territorial.,codex_gpt
+66,1,0,0,Debilidad importante,"No A&C fuerte: aunque usa informantes clave no probabilisticos, el nucleo no es inferencia muestral a poblacion sino mapeo cualitativo.",codex_gpt
+67,1,0,1,FF clasica,Falla A&C: encuesta voluntaria a hoteles/directivos y lectura sectorial/organizacional amplia.,codex_gpt
+68,1,1,0,Debilidad importante,"No falla fuerte: hay muestra pequena, pero el articulo acota el alcance como casos/indicios y evita una extrapolacion poblacional dura.",codex_gpt
+69,1,0,0,Debilidad importante,"No A&C fuerte: experiencia educativa exploratoria, sin pretension central de representatividad poblacional.",codex_gpt
+70,1,0,1,FF clasica,Falla A&C: encuesta urbana no probabilistica/no claramente aleatoria y extrapolacion a adopcion de vehiculos electricos.,codex_gpt
+71,0,0,0,Sin falla relevante,No configura A&C: base oficial y estimacion compatible con su diseno.,codex_gpt
+72,0,0,0,Sin falla relevante,No falla fuerte A&C: muestreo probabilistico local.,codex_gpt
+73,0,0,0,Sin falla relevante,"Falso positivo IA: datos administrativos/operativos de pesqueria, no encuesta inferencial humana A&C.",codex_gpt
+74,0,1,0,Sin falla relevante,"No aplica como A&C humano; si hay limitacion muestral biologica, no es la falla fuerte de muestreo no probabilistico + extrapolacion poblacional humana.",codex_gpt
+75,1,0,0,Debilidad importante,"No falla fuerte: caso escolar localizado, sin C fuerte.",codex_gpt
+76,1,0,1,FF clasica,Falla A&C: encuesta mixta no probabilistica a ciclistas y recomendaciones de infraestructura para usuarios/parques.,codex_gpt
+77,0,0,0,Sin falla relevante,No falla fuerte: caso local con calculo muestral y cobertura completa de comercios.,codex_gpt
+78,0,0,0,Sin falla relevante,No A&C: fuente estadistica/OD apropiada para comparacion metropolitana.,codex_gpt
+79,0,0,0,Sin falla relevante,No falla fuerte: muestra representativa/aleatoria para poblacion local definida.,codex_gpt
+80,1,0,1,FF clasica,Falla A&C: observacion no probabilistica en puntos/horarios y conclusiones sobre conductas urbanas.,codex_gpt
+81,1,1,1,FF con reconocimiento,Falla A&C con B=1: muestra online no probabilistica y lectura general sobre ciclistas urbanos.,codex_gpt
+82,0,0,0,Sin falla relevante,No A&C: base muestral calculada y estratificada.,codex_gpt
+83,1,0,0,Debilidad importante,"No falla fuerte: muestra escolar por consentimiento, pero el articulo se mantiene como intervencion/contexto especifico.",codex_gpt
+84,1,1,1,FF con reconocimiento,Falla A&C con B=1: seleccion oportunista de sesiones/registros y conclusion causal/pedagogica amplia.,codex_gpt
+85,0,0,0,Sin falla relevante,"Falso positivo IA: muestra ambiental/biologica, no falla A&C de muestreo humano.",codex_gpt
+86,0,0,0,Sin falla relevante,No falla fuerte: hay seleccion aleatoria y analisis tecnico ambiental.,codex_gpt
+87,0,0,0,Sin falla relevante,"Falso positivo IA: datos de inspeccion de carcasas, no A&C humano.",codex_gpt
+88,1,0,1,FF clasica,Falla A&C: muestreo por referencias y conclusiones municipales/cadena productiva.,codex_gpt
+89,0,1,0,Sin falla relevante,No A&C: estudio genetico/biomedico con cautela explicita y metaanalisis complementario.,codex_gpt
+90,0,0,0,Sin falla relevante,"Falso positivo IA: experimento zootecnico aleatorizado, fuera de la falla A&C humana/social.",codex_gpt
+91,0,0,0,Sin falla relevante,"Falso positivo IA: muestra biologica de murcielagos/hongos, fuera de la falla A&C humana/social.",codex_gpt
+92,1,0,1,FF clasica,Falla A&C: sujetos humanos/pacientes por muestra intencional y asociaciones clinicas extrapoladas.,codex_gpt
+93,0,0,0,Sin falla relevante,"Falso positivo IA: estudio molecular con tejidos/celulas, no A&C humano-social.",codex_gpt
+94,0,0,0,Sin falla relevante,"Falso positivo IA: estudio oncologico de bases/celulas, no la falla A&C que estamos midiendo.",codex_gpt
+95,0,0,0,Sin falla relevante,"Falso positivo IA: muestra clinica/biomolecular, fuera del blanco A&C social.",codex_gpt
+96,0,0,0,Sin falla relevante,"Falso positivo IA: estudio proteomico infantil, no A&C humano-social.",codex_gpt
+97,0,0,0,Sin falla relevante,Acuerdo: no aplica falla A&C por ausencia de muestra empirica.,codex_gpt
+98,1,0,0,Debilidad importante,"No falla fuerte: muestra cualitativa pequena, pero alcance exploratorio/caso.",codex_gpt
+99,1,0,0,Debilidad importante,"No falla fuerte: caso educativo institucional, sin C fuerte.",codex_gpt
+100,1,1,1,FF con reconocimiento,Falla A&C con B=1: reclutamiento online de conveniencia y recomendaciones generales para cuidadores.,codex_gpt
+101,1,1,1,FF con reconocimiento,Falla A&C con reconocimiento: muestra pequena/conveniencia y generalizacion preliminar clinica.,codex_gpt
+102,1,0,1,FF clasica,Falla A&C: muestra pequena por invitacion/referencia y conclusion general sobre adultos mayores.,codex_gpt
+103,0,0,0,Sin falla relevante,"Falso positivo IA: muestra de insectos, no falla A&C humana/social.",codex_gpt
+104,0,0,0,Sin falla relevante,"Acuerdo: base oficial PNADC, no falla A&C.",codex_gpt
+105,1,0,1,FF clasica,Falla A&C: entrevistas no probabilisticas y conclusiones sobre moradores/barrios y desigualdad social local.,codex_gpt
+106,0,0,0,Sin falla relevante,"No activa falla A&C: hay encuesta humana, pero con diseño probabilístico/estratificado documentado.",codex_gpt
+107,0,0,0,Sin falla relevante,"Falso positivo de Gemini: estudio econométrico de empresas, fuera del blanco A&C humano-social.",codex_gpt
+108,1,0,1,FF clasica,Activa A&C por entrevistas comunitarias no probabilísticas y afirmación general sobre migración y conocimiento etnobotánico.,codex_gpt
+109,1,0,1,FF clasica,"Duplicado temático del 108; Gemini lo marcó como no falla, pero sí hay A&C fuerte.",codex_gpt
+110,1,1,1,FF con reconocimiento,"Falla A&C: muestra voluntaria universitaria y conclusiones tecnológicas generales; el abstract pide estudios más amplios, por eso B=1.",codex_gpt
+111,1,1,1,FF con reconocimiento,"A&C fuerte, aunque el artículo reconoce limitaciones de experiencia/perfil muestral.",codex_gpt
+112,1,0,1,FF clasica,Falso negativo de Gemini: muestra escolar acotada/no probabilística con conclusión pedagógica general.,codex_gpt
+113,1,0,1,FF clasica,A&C fuerte por encuesta online de conveniencia y recomendación/diagnóstico de mercado-servicio.,codex_gpt
+114,1,0,1,FF clasica,A&C fuerte: muestra voluntaria en tema sensible con conclusiones sociales amplias.,codex_gpt
+115,1,0,1,FF clasica,A&C fuerte muy claro: el propio artículo declara muestreo no probabilístico intencional y luego afirma efectividad educativa.,codex_gpt
+116,0,1,0,Sin falla relevante,No falla A&C: fuente secundaria armonizada y advertencia de no causalidad.,codex_gpt
+117,0,0,0,Sin falla relevante,No activa A&C: base oficial poblacional/probabilística.,codex_gpt
+118,1,0,1,FF clasica,A&C fuerte por sostener inferencias nacionales/políticas con encuesta online no probabilística como evidencia central.,codex_gpt
+119,0,1,0,Sin falla relevante,"No falla A&C: fuente oficial representativa, aunque con limitaciones analíticas reconocidas.",codex_gpt
+120,1,1,1,FF con reconocimiento,Falso negativo de Gemini: muestra local no probabilística con inferencia de política/cuidado infantil; el artículo reconoce tamaño muestral limitado.,codex_gpt
+121,1,1,1,FF con reconocimiento,Falso negativo de Gemini: muestra voluntaria local y conclusiones sanitarias generales; el artículo reconoce limitación por recolección virtual y posible exclusión.,codex_gpt
+122,1,0,1,FF clasica,"Falso negativo de Gemini: aunque cualitativo, la base es extremadamente pequeña e intencional y sostiene inferencias sociales amplias.",codex_gpt
+123,0,1,0,Sin falla relevante,"No falla A&C: diseño probabilístico por conglomerados, aunque con limitaciones analíticas.",codex_gpt
+124,1,0,1,FF clasica,A&C fuerte: respuestas parciales/autoseleccionadas de UFAs y conclusiones regionales/organizacionales amplias.,codex_gpt
+125,0,0,0,Sin falla relevante,No activa A&C: estudio de caso arquitectónico/material.,codex_gpt
+126,1,0,1,FF clasica,Falso negativo de Gemini: encuesta profesional no aleatoria con inferencias generales sobre diseño hospitalario.,codex_gpt
+127,0,0,0,Sin falla relevante,No falla A&C: análisis teórico-iconográfico de arquitectura.,codex_gpt
+128,0,0,0,Sin falla relevante,"Falso positivo de Gemini: análisis documental/arquitectónico, fuera del blanco A&C.",codex_gpt
+129,0,0,0,Sin falla relevante,No falla A&C: ensayo/revisión histórica de arquitectura.,codex_gpt
+130,0,1,0,Sin falla relevante,Falso positivo de Gemini: estudio econométrico con datos de proyectos/estadística agrícola; no A&C muestral humano-social clásico.,codex_gpt
+131,0,0,0,Sin falla relevante,No falla A&C: datos secundarios WVS y desarrollo metodológico de análisis de redes.,codex_gpt
+132,1,0,1,FF clasica,"A&C fuerte: corpus documental institucional no probabilístico con inferencia amplia sobre clase, raza y sistema penal.",codex_gpt
+133,0,0,0,Sin falla relevante,"No falla A&C: estudio biomédico de laboratorio, fuera del blanco social de muestreo/opinión.",codex_gpt
+134,1,0,1,FF clasica,Falso negativo de Gemini: muestra cualitativa no probabilística con conclusiones antropológicas generales sobre mercados costeros.,codex_gpt
+135,1,1,1,FF con reconocimiento,"A&C fuerte con reconocimiento explícito: muestra no representativa, pero sostiene diagnóstico exploratorio nacional del colectivo.",codex_gpt
+136,1,0,1,FF clasica,Falso negativo de Gemini: muestra incidental de perfiles/publicaciones y conclusiones generales sobre estilos de comunicación política.,codex_gpt
+137,1,1,1,FF con reconocimiento,Falso negativo de Gemini: n=9 no probabilístico sostiene una propuesta metodológica general; reconoce necesidad de más validación.,codex_gpt
+138,0,0,0,Sin falla relevante,"No falla A&C: revisión biomédica con experiencia clínica, fuera del blanco social de muestreo no probabilístico.",codex_gpt
+139,0,1,0,Sin falla relevante,"No falla A&C: estudio de fauna urbana, no encuesta humana/social.",codex_gpt
+140,1,1,1,FF con reconocimiento,Falso negativo de Gemini: muestra local voluntaria con recomendaciones clínicas generales; el artículo reconoce límites de causalidad y generalización.,codex_gpt
+141,1,1,1,FF con reconocimiento,"Falso negativo de Gemini: muestreo por conveniencia explícito y conclusiones de reducción de daños/locales, aunque reconoce no representatividad.",codex_gpt
+142,0,0,0,Sin falla relevante,No falla A&C: análisis secundario de encuesta regional establecida.,codex_gpt
+143,1,0,1,FF clasica,Falso negativo de Gemini: el artículo declara ausencia de muestreo y sostiene implicaciones de política/intervención.,codex_gpt
+144,1,0,1,FF clasica,A&C fuerte: encuesta estudiantil institucional sin muestreo probabilístico documentado y conclusiones generales sobre estudiantes universitarios.,codex_gpt
+145,0,1,0,No evaluable,"No evaluable: carta/respuesta editorial, no artículo auditable autónomo.",codex_gpt
+146,1,0,1,FF clasica,A&C fuerte: muestra hospitalaria no probabilística con conclusión poblacional sobre gestantes.,codex_gpt
+147,0,0,0,No evaluable,"No evaluable: respuesta editorial, excluir de acuerdo IA-humano.",codex_gpt
+148,0,1,0,Sin falla relevante,"Falso positivo de Gemini: muestra probabilística representativa por ciudad, no falla A&C.",codex_gpt
+149,0,0,0,Sin falla relevante,No falla A&C: estudio institucional/censal de cohortes universitarias con alcance acotado.,codex_gpt
+150,1,1,1,FF con reconocimiento,A&C fuerte con reconocimiento explícito: no hay muestreo aleatorio y se derivan recomendaciones curriculares/laborales.,codex_gpt
+151,0,0,0,Sin falla relevante,Muestreo probabilistico por conglomerados; no hay falla A&C.,codex_gpt
+152,1,0,0,Debilidad importante,Unidades lecheras seleccionadas por ruta de recoleccion; comparacion antes-despues acotada sin extrapolacion fuerte.,codex_gpt
+153,0,0,0,Sin falla relevante,Experimento zootecnico con diseno completamente aleatorizado; no aplica falla A&C de muestreo poblacional.,codex_gpt
+154,0,0,0,Sin falla relevante,Analisis ambiental/ecologico con registros de material particulado e IRA; no hay muestra no probabilistica de participantes.,codex_gpt
+155,1,0,1,FF clasica,Muestra de empleados de una filial sin diseno probabilistico y regresiones usadas para sostener conclusiones generales de talento humano.,codex_gpt
+156,1,0,0,Debilidad importante,Muestra de graduados para PSM sin marco probabilistico claro; estimacion acotada al programa y sin salto poblacional fuerte.,codex_gpt
+157,0,0,0,Sin falla relevante,Muestreo estratificado de empresas informales; no se configura A&C.,codex_gpt
+158,1,0,1,FF clasica,Muestra autoseleccionada de seguidores/clientes y correlaciones usadas para afirmar impacto del modelo 4F en posicionamiento de marca.,codex_gpt
+159,0,0,0,Sin falla relevante,Muestreo probabilistico aleatorio simple con representatividad declarada; no hay A&C.,codex_gpt
+160,0,0,0,Sin falla relevante,Instituciones y escolares seleccionados aleatoriamente; intervencion educativa sin falla A&C.,codex_gpt
+161,1,0,0,Debilidad importante,Muestreo por conveniencia de estudiantes de enfermeria; inferencia local sin extrapolacion poblacional fuerte.,codex_gpt
+162,1,1,1,FF con reconocimiento,Muestreo por conveniencia en mujeres mayores de 35; reconoce no representatividad pero deriva factores asociados al retorno laboral.,codex_gpt
+163,0,0,0,Sin falla relevante,Historias clinicas seleccionadas mediante muestreo aleatorio sistematico; no hay A&C.,codex_gpt
+164,1,1,1,FF con reconocimiento,Participacion voluntaria/no probabilistica; reconoce baja generalizabilidad pero afirma efecto significativo del programa gatekeeper.,codex_gpt
+165,1,0,0,Debilidad importante,Muestreo por criterio y referido de cuidadores; descripcion local sin extrapolacion inferencial fuerte.,codex_gpt
+166,0,0,0,Sin falla relevante,Censo/local de 44 estudiantes de odontologia en un curso; conclusion acotada al simulador y no falla A&C.,codex_gpt
+167,1,1,1,FF con reconocimiento,Muestreo por conveniencia con tamano reducido reconocido; inferencia y conclusion amplia sobre QuimAR en secundaria.,codex_gpt
+168,1,0,1,FF clasica,Muestreo intencional de docentes/estudiantes universitarios y evaluacion usada para validar una herramienta patrimonial de alcance amplio.,codex_gpt
+169,1,0,1,FF clasica,Muestra intencional de preescolares y prueba Wilcoxon usada para recomendar la intervencion educativa.,codex_gpt
+170,1,1,0,Debilidad importante,Muestreo por conveniencia en dos instituciones; reconoce condicionamiento contextual y no obtiene relacion significativa fuerte.,codex_gpt
+171,1,0,0,Debilidad importante,Censo/conveniencia de 36 estudiantes de una unidad; base local sin extrapolacion A&C fuerte.,codex_gpt
+172,0,0,1,Debilidad importante,No declara claramente base muestral; usa chi-cuadrado para sostener mejora en primaria; problema de reporte mas que A&C demostrada.,codex_gpt
+173,1,0,1,FF clasica,Baja respuesta a cuestionario parlamentario y muestra de iniciativas; concluye uso generalizado de IA en la camara.,codex_gpt
+174,0,0,0,Sin falla relevante,Muestra censal de docentes de cuatro instituciones; no hay muestreo no probabilistico inferencial A&C.,codex_gpt
+175,0,0,0,Sin falla relevante,Muestreo probabilistico de beneficiarios con representatividad declarada; no hay falla A&C.,codex_gpt
+176,0,0,0,Sin falla relevante,Muestreo aleatorio simple de usuarios con representatividad declarada; no hay A&C.,codex_gpt
+177,1,0,1,FF clasica,Muestra intencional de consumidores y Spearman usado para validar relacion general entre 4C y preferencia del consumidor.,codex_gpt
+178,0,0,0,Sin falla relevante,Muestreo probabilistico de comerciantes; correlaciones con base representativa local.,codex_gpt
+179,0,0,0,Sin falla relevante,Muestreo aleatorio simple de trabajadores con representatividad declarada; no hay A&C.,codex_gpt
+180,1,0,1,FF clasica,Encuesta a participantes sin procedimiento probabilistico claro y conclusiones sobre acogida/desarrollo agroturistico local.,codex_gpt
+181,0,0,0,Sin falla relevante,Muestreo probabilistico aleatorio simple de usuarios del mercado; no hay A&C.,codex_gpt
+182,1,1,1,FF con reconocimiento,Muestra finita de emprendimientos sin seleccion probabilistica clara; generaliza a Manabi y pide extender para confirmar generalizacion.,codex_gpt
+183,0,0,0,Sin falla relevante,Muestreo probabilistico aleatorio simple de clientes; no se configura A&C.,codex_gpt
+184,0,0,0,Sin falla relevante,Analisis de corpus de publicaciones en X mediante KDD; no hay muestreo no probabilistico de unidades humanas encuestadas.,codex_gpt
+185,0,0,0,No evaluable,Compilacion de comunicaciones orales; no es articulo auditable autonomo.,codex_gpt
+186,0,0,0,No evaluable,Compilacion de posters/resumenes; no es articulo auditable autonomo.,codex_gpt
+187,0,0,0,Sin falla relevante,Estudio cualitativo con entrevistas; no busca inferencia estadistica poblacional A&C.,codex_gpt
+188,0,0,0,Sin falla relevante,Estudio cualitativo exploratorio; no corresponde a inferencia estadistica poblacional A&C.,codex_gpt
+189,1,1,1,FF con reconocimiento,Encuesta/seguimiento con respuesta parcial; reconoce restriccion de generalizacion pero deriva implicancias de salud publica.,codex_gpt
+190,1,0,0,Debilidad importante,Muestra clinica pequena de pacientes con angioedema; asociaciones exploratorias acotadas a la muestra.,codex_gpt
+191,1,1,1,FF con reconocimiento,Participantes reclutadas por redes sociales; reconoce limitaciones pero modela sintomas post-COVID como predictores de incontinencia.,codex_gpt
+192,1,0,1,FF clasica,Muestra clinica/adolescente no probabilistica con ANOVA y conclusion preventiva general sobre ejercicio y polimorfismo ACE.,codex_gpt
+193,0,0,0,Sin falla relevante,Muestra aleatoria simple calculada para poblacion penitenciaria; generalizacion justificada por diseno probabilistico.,codex_gpt
+194,1,1,1,FF con reconocimiento,Serie retrospectiva pequena sin aleatorizacion; reconoce sesgos y aun sostiene efectividad del tratamiento artroscopico.,codex_gpt
+195,0,1,0,Sin falla relevante,"Ensayo prospectivo randomizado; aunque reconoce baja generalizabilidad, no hay falla A&C de muestreo observacional.",codex_gpt
+196,1,1,1,FF con reconocimiento,Muestra clinica de obesos/control no pareada; reconoce limitaciones y generaliza diferencias funcionales en obesidad morbida.,codex_gpt
+197,1,1,1,FF con reconocimiento,Cohorte retrospectiva de conveniencia; reconoce tamano pequeno y aun infiere beneficio quirurgico para DMD.,codex_gpt
+198,1,0,1,FF clasica,Serie hospitalaria retrospectiva usada para describir perfil epidemiologico y riesgos de fracturas de tibia sin advertencia clara.,codex_gpt
+199,1,1,0,Debilidad importante,Serie hospitalaria pequena con sesgos y perdida de seguimiento; conclusiones principalmente descriptivas del servicio.,codex_gpt
+200,1,1,0,Debilidad importante,Muestra clinica homogenea de primiparas; reconoce limites de generalizacion y no identifica asociaciones en regresion.,codex_gpt
+201,0,0,0,Sin falla relevante,Estudio cualitativo con enfermeros; no hay inferencia estadistica poblacional que active falla A&C.,codex_gpt
+202,1,0,1,FF clasica,Cohorte retrospectiva unicentrica de pacientes Takayasu; usa regresiones y proyecta indicador pronostico sin reconocimiento claro de generalizacion.,codex_gpt
+203,1,0,0,Debilidad importante,Submuestra de participantes con insuficiencia cardiaca dentro de ELSA-Brasil; conclusiones mayormente acotadas a la cohorte.,codex_gpt
+204,1,0,1,FF clasica,Cohorte prospectiva hospitalaria pequena en HFpEF; propone puntaje pronostico con alcance clinico amplio sin advertencia visible.,codex_gpt
+205,1,1,1,FF con reconocimiento,"Cuentas de cardiologos identificadas por autodescripcion en Twitter/X; reconoce corte temporal y cobertura limitada, pero concluye sobre cardiologos brasilenos.",codex_gpt
+206,1,1,1,FF con reconocimiento,Muestra prospectiva pequena de cardiomiopatia chagasica y controles; reconoce limitaciones metodologicas y concluye mecanismo hemodinamico general.,codex_gpt
+207,1,1,1,FF con reconocimiento,Analisis bibliometrico/CV de investigadoras seleccionadas; reconoce restricciones de cobertura y aun infiere disparidades de genero.,codex_gpt
+208,1,0,1,FF clasica,Encuesta/grupos sobre whistleblowing con participantes reclutados no probabilisticamente; extrapola barreras en academia sin cautela suficiente.,codex_gpt
+209,0,0,0,No evaluable,"PDF corresponde a anales/resumenes de simposio, no a un articulo empirico unico auditable.",codex_gpt
+210,1,1,1,FF con reconocimiento,Estudio transversal en 111 pacientes de hemodialisis; reconoce necesidad de estudios longitudinales y aun concluye sobre pacientes ESRD en HD.,codex_gpt
+211,1,1,1,FF con reconocimiento,Cohorte prospectiva unicentrica de COVID-19 critico con AKI; declara limites de generalizacion y mantiene conclusion clinica amplia.,codex_gpt
+212,1,1,1,FF con reconocimiento,Encuesta a nefrologos con muestreo no probabilistico/snowball; reconoce representatividad regional limitada y concluye sobre MR en Brasil.,codex_gpt
+213,1,0,1,FF clasica,Estudio prospectivo pequeno de biomarcadores en CABG; infiere asociacion del procedimiento con cambios biologicos sin limitacion clara.,codex_gpt
+214,0,0,0,Sin falla relevante,"Serie retrospectiva de tumores en un centro, con descripcion del perfil atendido; no hay extrapolacion fuerte fuera del servicio.",codex_gpt
+215,1,1,0,Debilidad importante,Serie retrospectiva pediatrica pequena sobre VPS por residentes; explora factores y resultados sin convertirlos en inferencia poblacional fuerte.,codex_gpt
+216,1,0,0,Debilidad importante,"Evaluacion documental/descriptiva de libretas de gestantes; muestra institucional incompleta, pero conclusiones principalmente descriptivas.",codex_gpt
+217,1,0,0,Debilidad importante,Registros retrospectivos de STEMI/PCI de hospital; estima mortalidad y asociaciones del servicio sin extrapolacion poblacional fuerte.,codex_gpt
+218,1,1,1,FF con reconocimiento,Muestra de conveniencia en un hospital de emergencia; reconoce limite de generalizacion y recomienda programas/protocolos en servicios.,codex_gpt
+219,0,0,0,Sin falla relevante,Cuasi-experimento con seleccion aleatoria simple desde elegibles; no se observa falla A&C relevante.,codex_gpt
+220,1,1,1,FF con reconocimiento,Muestreo snowball con poblacion trans via ONG; reconoce la estrategia de captacion y concluye sobre barreras institucionales amplias.,codex_gpt
+221,1,1,0,Debilidad importante,Corte transversal de profesionales de enfermeria con limite de generalizacion reconocido; conclusiones se mantienen en asociaciones descriptivas.,codex_gpt
+222,1,1,0,Debilidad importante,Cohorte retrospectiva de 47 pacientes de columna; compara costo-efectividad por edad con alcance principalmente del grupo tratado.,codex_gpt
+223,1,0,0,Debilidad importante,Serie retrospectiva de 404 cirugias AIS para clasificacion; muestra hospitalaria pero conclusion no fuerza extrapolacion poblacional.,codex_gpt
+224,1,1,1,FF con reconocimiento,Encuesta voluntaria no aleatorizada de 95 cirujanos de columna; concluye alta prevalencia en cirujanos de columna.,codex_gpt
+225,1,0,0,Debilidad importante,Serie retrospectiva de 41 lesionados medulares; resultados no significativos y conclusion acotada al seguimiento clinico.,codex_gpt
+226,1,1,1,FF con reconocimiento,"Cohorte historica unicentrica; reconoce tamano pequeno, sesgo retrospectivo y falta de generalizacion, pero formula pronostico clinico amplio.",codex_gpt
+227,1,1,1,FF con reconocimiento,Encuesta retrospectiva con respuesta parcial tras discectomia; reconoce limites y aun deriva orientaciones para practica deportiva.,codex_gpt
+228,0,0,0,Sin falla relevante,"Ensayo in vivo con asignacion aleatorizada de grupos; la pregunta es experimental, no de inferencia poblacional por muestra no probabilistica.",codex_gpt
+229,1,1,1,FF con reconocimiento,Estudio longitudinal de pacientes ortodonticos de programa/consulta; reconoce restricciones y concluye diferencias entre alineadores y brackets.,codex_gpt
+230,1,0,1,FF clasica,Caso-control prospectivo pequeno de pacientes CLP; concluye mejora estetica por lip filling con muestra clinica no probabilistica.,codex_gpt
+231,1,1,1,FF con reconocimiento,Cohorte prospectiva pequena de pacientes pediatricos odontologicos; reconoce caracter preliminar y aun infiere efecto de perdida prematura.,codex_gpt
+232,1,1,1,FF con reconocimiento,Estudio transversal de casos ortodonticos aprobados por junta; reconoce restricciones de muestra y generaliza errores/prediccion.,codex_gpt
+233,0,0,0,Sin falla relevante,Ensayo cruzado aleatorizado con calculo muestral; inferencia principal es experimental interna.,codex_gpt
+234,1,0,1,FF clasica,Estudio transversal con ortodoncistas que evaluan casos; muestra profesional no probabilistica y conclusiones sobre decisiones terapeuticas.,codex_gpt
+235,1,0,0,Debilidad importante,"Comparacion retrospectiva pareada de 42 pacientes; sugiere menor reabsorcion con LIPUS, pero el alcance queda relativamente clinico-local.",codex_gpt
+236,1,1,1,FF con reconocimiento,Encuesta transversal digital en estudiantes de una universidad; reconoce ausencia de causalidad/seguimiento y recomienda estrategias institucionales.,codex_gpt
+237,0,0,0,No evaluable,Protocolo de ensayo clinico sin resultados empiricos observados; no permite auditar A&C en conclusiones de resultados.,codex_gpt
+238,0,0,0,Sin falla relevante,"Analisis retrospectivo de registros de pruebas virales del laboratorio; funciona como serie/censo de registros, sin sobreinferencia muestral clara.",codex_gpt
+239,1,1,1,FF con reconocimiento,Muestra de conveniencia de insuficiencia cardiaca y controles; reconoce limitaciones y concluye diferencias de actividad frente a sanos.,codex_gpt
+240,1,1,1,FF con reconocimiento,Estudio prospectivo no aleatorizado de tecnicas BSSO; reconoce sesgos por sexo/edad/genioplastia y concluye recuperacion sensorial superior.,codex_gpt
+241,1,1,0,Debilidad importante,"Notificaciones espontaneas de RAM en hospital de ensenanza; reconoce subnotificacion/clasificacion, con conclusion institucional acotada.",codex_gpt
+242,1,0,1,FF clasica,Intervencion educativa en 123 pacientes hipertensos de servicio; compara grupos y recomienda uso de folder sin limite de generalizacion claro.,codex_gpt
+243,1,0,1,FF clasica,Analisis retrospectivo/cualitativo con participantes sobre azitromicina en pandemia; infiere uso significativo y necesidad educativa sin cautela muestral.,codex_gpt
+244,1,1,0,Debilidad importante,Registro multicentrico consecutivo de cinco hospitales; reconoce limitaciones del registro y las conclusiones se centran en diferencias observadas.,codex_gpt
+245,1,0,1,FF clasica,Encuesta electronica a corredores de asesorias/grupos; identifica predictores y recomienda prevencion para corredores brasilenos sin reconocimiento visible.,codex_gpt
+246,1,0,1,FF clasica,Retrospectivo longitudinal de 35 pacientes en hospital de referencia; asocia complicaciones con clasificacion AO/OTA y resultados funcionales.,codex_gpt
+247,1,0,1,FF clasica,Cohorte retrospectiva TriNetX con PSM; base amplia pero no probabilistica y concluye mayor riesgo de fallo por artrodesis.,codex_gpt
+248,1,1,1,FF con reconocimiento,Estudio retrospectivo de solo 10 carcaras de vida libre; reconoce tamano pequeno y propone valores de referencia diagnosticos.,codex_gpt
+249,1,1,1,FF con reconocimiento,Duplicado aparente del estudio de carcaras; misma muestra pequena y reconocimiento de limitaciones antes de proponer referencia radiografica.,codex_gpt
+250,1,0,0,Debilidad importante,"Estudio en 89 vacas de tres granjas; compara grupos con pruebas estadisticas, pero conclusion se limita a hallazgos diagnosticos observados.",codex_gpt
+251,1,0,1,FF clasica,Prevalencia serologica en comunidades especificas; extrapola riesgo/prevalencia sin reconocimiento visible de muestreo.,codex_gpt
+252,1,1,0,Debilidad importante,Muestras vegetales de zonas seleccionadas; reconoce alcance descriptivo y no fuerza inferencia poblacional.,codex_gpt
+253,1,1,1,FF con reconocimiento,Serie retrospectiva secuencial post-COVID; reconoce limitaciones y concluye deterioro funcional en la poblacion estudiada.,codex_gpt
+254,1,1,1,FF con reconocimiento,Encuesta online de conveniencia a universitarios; reconoce sesgos de representacion y asocia actividad fisica con autopercepcion de salud.,codex_gpt
+255,1,1,0,Sin falla relevante,Muestra por conveniencia de adultos mayores; reconoce que no permite extrapolar y concluye acotado al grupo estudiado.,codex_gpt
+256,0,0,0,Sin falla relevante,"Ensayo fase II doble ciego controlado con placebo; inferencia experimental interna, sin falla A&C de muestreo poblacional.",codex_gpt
+257,1,0,1,FF clasica,Encuesta virtual transversal a trabajadores remotos; concluye impacto de pandemia y uso de PICS con alcance amplio sin cautela muestral clara.,codex_gpt
+258,1,1,1,FF con reconocimiento,Muestra por conveniencia de 62 mayores; reconoce limitaciones y concluye influencia del miedo a caer en desempeno funcional.,codex_gpt
+259,1,0,1,FF clasica,Estudio transversal de 61 conductores mayores; deriva conclusiones generales sobre conduccion y bienestar sin limite muestral claro.,codex_gpt
+260,1,0,0,Debilidad importante,Prontuarios de clinica-escuela; reconoce datos autorreferidos y conclusion principalmente sobre necesidad de pesquisa geriatrica.,codex_gpt
+261,1,0,1,FF clasica,Muestra clinica de primer atendimento psiquiatrico; usa asociaciones y concluye relevancia clinica general de contratransferencia.,codex_gpt
+262,1,0,1,FF clasica,Prontuarios de hospital de media complejidad; estima prevalencias y riesgos en mayores hospitalizados con alcance amplio.,codex_gpt
+263,1,1,1,FF con reconocimiento,Entrevistas a 171 mayores con espacio amostral limitado reconocido; concluye agravamiento de salud mental y habitos durante pandemia.,codex_gpt
+264,1,1,0,Debilidad importante,Caso-control de adultos mayores pareados; reconoce predominio femenino/baja escolaridad y no encuentra diferencias significativas.,codex_gpt
+265,1,1,1,FF con reconocimiento,Cuestionario online a dentistas/estudiantes; muestra voluntaria y conclusiones sobre decisiones restauradoras en Brasil.,codex_gpt
+266,1,1,1,FF con reconocimiento,Estudio ecologico con datos secundarios; reconoce sesgos ecologicos/calidad de datos y concluye baja resolucion municipal.,codex_gpt
+267,1,1,0,Debilidad importante,"Cuasi-experimento educativo; reconoce falta de aleatorizacion completa y limita generalizacion, con conclusion de mejora de conocimiento.",codex_gpt
+268,1,0,1,FF clasica,Analisis retrospectivo pequeno de 35 ninos en UCI; concluye que cavidad oral sirve como reservorio respiratorio sin cautela visible.,codex_gpt
+269,1,1,1,FF con reconocimiento,Corte transversal de 55 ninos autistas en una asociacion; concluye necesidad de programas preventivos para ninos y padres.,codex_gpt
+270,1,1,1,FF con reconocimiento,"Muestra clinica de ninos obesos; reconoce ausencia de grupo control y recomienda estudios mayores, aunque concluye sobre maloclusion.",codex_gpt
+271,1,0,1,FF clasica,Encuesta a 37 dentistas de una ciudad; infiere comprension profesional de desafios post-oncologicos sin cautela muestral.,codex_gpt
+272,1,1,1,FF con reconocimiento,"Encuesta online a beneficiarios de transferencia de renta; reconoce baja participacion y barreras digitales, pero concluye sobre SAN.",codex_gpt
+273,1,1,0,Debilidad importante,Experimento observacional con solo cuatro ninos; advierte necesidad de mas estudios y mantiene conclusion preliminar.,codex_gpt
+274,1,1,1,FF con reconocimiento,"Cohorte prospectiva en dos hospitales; reconoce heterogeneidad y mediciones no padronizadas, pero infiere riesgo de estancia/muerte.",codex_gpt
+275,1,1,1,FF con reconocimiento,Retrospectivo de 60 pacientes COVID en UCI unica; reconoce sesgo de seleccion/muestra limitada y concluye utilidad pronostica.,codex_gpt
+276,1,1,1,FF con reconocimiento,Encuesta a discentes de medicina de una universidad; reconoce limites y concluye necesidad formativa en comunicacion de malas noticias.,codex_gpt
+277,1,0,0,Debilidad importante,Encuesta exploratoria a medicos de hospital oncologico; conclusiones se restringen a percepciones y conducta institucional.,codex_gpt
+278,1,0,1,FF clasica,Estudio retrospectivo de gestantes con HIV; compara metodos y concluye insuficiente adherencia/riesgo de transmision sin cautela muestral clara.,codex_gpt
+279,0,0,0,Sin falla relevante,"Estudio cualitativo con 17 personas con lesion medular; conclusiones se formulan como experiencias de participantes, no inferencia estadistica.",codex_gpt
+280,1,0,1,FF clasica,Conveniencia de madres en unidades/escuelas; asocia factores sociodemograficos con CAP y recomienda politicas educativas amplias.,codex_gpt
+281,0,0,0,Sin falla relevante,Estudio cualitativo sobre clima etico hospitalario; no hay inferencia estadistica poblacional A&C.,codex_gpt
+282,1,0,1,FF clasica,Prontuarios retrospectivos de gestantes con sepsis; concluye contribucion del sistema de alerta/protocolos sin reconocimiento visible.,codex_gpt
+283,1,1,1,FF con reconocimiento,Muestra no probabilistica de 31 madres en una unidad neonatal; reconoce generalizacion limitada y recomienda educacion permanente.,codex_gpt
+284,1,0,0,Debilidad importante,"Pesquisa-accion municipal local; resultados orientan construccion del nucleo, sin extrapolacion inferencial fuerte.",codex_gpt
+285,1,1,1,FF con reconocimiento,Evaluacion de usabilidad con pocos usuarios directos; reconoce falta de participacion de publico objetivo y concluye utilidad de plataforma.,codex_gpt
+286,1,0,1,FF clasica,Retrospectivo unicentrico de 81 fracturas; concluye superioridad/beneficios de tecnica MIPO sin cautela de seleccion.,codex_gpt
+287,1,1,1,FF con reconocimiento,"Corte transversal en escuelas publicas; reconoce autorreporte, causalidad y generalizacion limitada, pero concluye factores asociados en adolescentes.",codex_gpt
+288,1,1,1,FF con reconocimiento,Cohorte prospectiva de prematuros de hospital universitario; reconoce limitaciones y concluye determinantes del crecimiento.,codex_gpt
+289,1,1,1,FF con reconocimiento,Encuesta transversal de familias SMA reclutadas; conclusiones sobre percepcion paciente/cuidador con muestra de participantes elegibles.,codex_gpt
+290,1,1,1,FF con reconocimiento,Corte transversal escolar con tiempo de pantalla autorreportado; concluye asociacion con sintomas psicologicos en adolescentes.,codex_gpt
+291,1,1,0,Debilidad importante,Revision retrospectiva de intentos suicidas en dos emergencias; reconoce no causalidad/subregistro y conclusion comparativa acotada.,codex_gpt
+292,1,1,1,FF con reconocimiento,Corte transversal en hospital terciario; reconoce concentracion regional y concluye religiosidad asociada a menor uso de alcohol.,codex_gpt
+293,1,1,1,FF con reconocimiento,Dentistas captados en redes sociales; reconoce limitacion de busqueda/seleccion y concluye necesidad de protocolos.,codex_gpt
+294,1,1,1,FF con reconocimiento,Muestra no probabilistica de hemodialisis; reconoce falta de validez externa/control y concluye factores asociados a edentulismo.,codex_gpt
+295,1,1,1,FF con reconocimiento,Datos secundarios SINAN; reconoce limites de vigilancia/servicios y concluye factores sociodemograficos-clinicos de dengue grave.,codex_gpt
+296,1,1,1,FF con reconocimiento,"Muestra pequena de una escuela; reconoce no generalizacion y autorreporte, pero recomienda programas preventivos escolares.",codex_gpt
+297,0,0,0,Sin falla relevante,"Articulo metodologico sobre poblaciones de dificil acceso; el foco es estrategia de reclutamiento, no extrapolacion inferencial de resultados.",codex_gpt
+298,1,1,1,FF con reconocimiento,Cohorte RPS con perdidas de seguimiento reconocidas; concluye determinantes tempranos de masa libre de grasa.,codex_gpt
+299,1,1,1,FF con reconocimiento,"Corte transversal en APS de una ciudad; reconoce respuesta/refusos y alcance local, pero concluye diferencias de cultura de seguridad.",codex_gpt
+300,1,1,1,FF con reconocimiento,RDS en 10 ciudades; reconoce controversias/agregacion/no representatividad y concluye alta discriminacion en HSH de Brasil.,codex_gpt
+301,1,0,1,FF clasica,Muestra intencional de 68 participantes en experiencias rurales seleccionadas; concluye necesidad de incentivar atributos APS en territorios.,codex_gpt
+302,1,1,0,Debilidad importante,Muestra reducida de 20 mayores de proyecto UNAMI; reconoce sesgo/tamano y conclusion acotada a participantes.,codex_gpt
+303,1,0,1,FF clasica,Encuesta transversal a trabajadores de 14 puestos; concluye efectos de baja informacion y vulnerabilidad laboral sin cautela muestral.,codex_gpt
+304,1,0,0,Debilidad importante,Estudio transversal de salas de vacuna en distrito; conclusion local sobre inadecuaciones y gestion de riesgos.,codex_gpt
+305,1,0,0,Debilidad importante,"Evaluacion antes-despues de curso de buenas practicas; conclusion pedagogica descriptiva segun escolaridad, sin extrapolacion fuerte.",codex_gpt
+306,1,1,0,Debilidad importante,Serie longitudinal retrospectiva institucional de reacciones transfusionales; evalua practica local y gravedad por unidad.,codex_gpt
+307,1,1,1,FF con reconocimiento,Estudio hospitalario con ventana temporal limitada reconocida; concluye eventos adversos por cateter y orienta prevencion.,codex_gpt
+308,1,0,1,FF clasica,Corte transversal de 107 pacientes de hemodialisis de un hospital; concluye buena calidad de vida/autocuidado sin cautela visible.,codex_gpt
+309,1,0,1,FF clasica,Analisis documental de 160 trabajos estudiantiles; propone intervencion pedagogica extensible a otras poblaciones sin cautela suficiente.,codex_gpt
+310,1,1,0,Debilidad importante,Muestreo no probabilistico de 56 estudiantes; reconoce limitada generalizacion y conclusion sobre relacion academica local.,codex_gpt
+311,1,0,1,FF clasica,Muestra por conveniencia de 102 universitarios; concluye estres como desencadenante/agravante de ansiedad sin reconocimiento visible.,codex_gpt
+312,1,1,1,FF con reconocimiento,Muestras de agua y evaluacion deterministica de riesgo; reconoce incertidumbre metodologica y concluye riesgo sanitario amplio.,codex_gpt
+313,1,0,0,Debilidad importante,Analisis de causas judiciales sobre Nusinersen; no es muestreo poblacional clasico y conclusiones se centran en eficiencia del proceso.,codex_gpt
+314,1,1,0,Debilidad importante,"Estudio transversal prospectivo de 112 trabajadores; estima prevalencia/factores, pero conclusion se mantiene clinico-descriptiva.",codex_gpt
+315,0,0,0,Sin falla relevante,Muestreo aleatorio estratificado de pacientes endoscopicos; no se observa falla A&C relevante.,codex_gpt
+316,1,1,1,FF con reconocimiento,"Paginas de Instagram seleccionadas por busqueda; reconoce sesgo del mecanismo y datos no verificados, pero concluye incumplimiento etico.",codex_gpt
+317,1,1,0,Debilidad importante,Pacientes hospitalizados evaluados por FPM; limitaciones del IMC/diseno y conclusion clinica moderada sobre asociacion.,codex_gpt
+318,1,1,0,Debilidad importante,Muestra no probabilistica intencional de 31 pacientes con disfagia; reconoce seleccion y no seguimiento largo.,codex_gpt
+319,0,0,0,No evaluable,"PDF corresponde a premio/compilacion de investigacion con resumenes, no a un articulo unico claramente auditable.",codex_gpt
+320,1,1,1,FF con reconocimiento,Comparativo transversal con 14 pacientes CRC y 14 controles; reconoce muestra pequena y concluye necesidad de evaluacion nutricional.,codex_gpt
+321,1,0,1,FF clasica,Encuesta multicentrica online a estudiantes de medicina; concluye conocimientos/aceptacion en Latinoamerica sin cautela suficiente.,codex_gpt
+322,1,1,1,FF con reconocimiento,Encuesta virtual a 114 dentistas; reconoce tamano muestral/no representatividad y concluye bajo conocimiento normativo.,codex_gpt
+323,1,1,1,FF con reconocimiento,Analisis secundario de gestantes vulnerables; reconoce sesgo de registros y concluye necesidad de estrategias/politicas.,codex_gpt
+324,1,1,1,FF con reconocimiento,Pre-experimento con muestra no probabilistica y perdida de participantes; reconoce validez externa limitada y concluye mejoras fisicas.,codex_gpt
+325,0,0,0,Sin falla relevante,Muestra probabilistica de estudiantes de medicina; no hay falla A&C relevante.,codex_gpt
+326,1,1,1,FF con reconocimiento,Observacional multicentrico de hemodialisis; reconoce no causalidad/confusion y concluye factores asociados a mortalidad.,codex_gpt
+327,1,0,1,FF clasica,Retrospectivo de 34 casos de hemorragia postparto; formula vigilancia y estrategias preventivas sin cautela visible.,codex_gpt
+328,1,0,0,Debilidad importante,Estudio retrospectivo descriptivo de prevalencia en emergencia; limitaciones de diseno y conclusion principalmente descriptiva.,codex_gpt
+329,1,1,0,Debilidad importante,"Retrospectivo institucional con muestra incompleta; reconoce sesgo y poblacion no general, conclusion diagnostica prudente.",codex_gpt
+330,0,0,0,Sin falla relevante,Estudio epidemiologico veterinario con asociaciones descriptivas; no se aprecia falla de extrapolacion fuerte en el texto revisado.,codex_gpt
+331,0,0,0,Sin falla relevante,"Evaluacion toxico/experimental en Apis mellifera; la inferencia central es de efecto letal bajo condiciones de estudio, no poblacional A&C.",codex_gpt
+332,1,0,1,FF clasica,Comparacion productiva de lechones en region especifica; concluye efectividad/comportamiento productivo sin cautela muestral clara.,codex_gpt
+333,0,0,0,Sin falla relevante,Muestra aleatoria estratificada de enfermeros; no se observa falla A&C relevante.,codex_gpt
+334,1,0,1,FF clasica,Encuesta estratificada e entrevistas en docentes mongoles; concluye potencial del desarrollo profesional con alcance amplio sin cautela visible.,codex_gpt
+335,0,0,0,Sin falla relevante,"Estudio mixto sobre inteligencia emocional docente; conclusiones se apoyan en analisis tipologico/modelo, sin falla A&C marcada.",codex_gpt
+336,1,0,1,FF clasica,Investigacion derivada de muestra escolar/docente sobre astronomia; discute limitaciones formativas y practica con alcance amplio.,codex_gpt
+337,0,0,0,Sin falla relevante,Analisis geoespacial/descriptivo con datos territoriales; no depende de muestra no probabilistica de participantes.,codex_gpt
+338,1,1,1,FF con reconocimiento,Estudio con estudiantes de biologia; reconoce muestra reducida/conformidad entre pares y concluye impacto del distanciamiento academico.,codex_gpt
+339,1,0,1,FF clasica,Estudio exploratorio de percepciones estudiantiles sobre YouTube; extrapola utilidad/percepciones educativas sin reconocimiento claro.,codex_gpt
+340,1,0,1,FF clasica,Metodos mixtos con docentes universitarios colombianos; concluye ausencia de ensenanza SRL estandarizada sin cautela de muestreo visible.,codex_gpt
+341,0,0,0,Sin falla relevante,Estudio mixto cualitativo sobre capacidades valoradas por formadores; conclusiones exploratorias sin inferencia estadistica fuerte.,codex_gpt
+342,1,0,0,Debilidad importante,"Encuesta online y 20 entrevistas intencionales a profesionales TESOL; conclusiones sobre motivadores, con alcance descriptivo.",codex_gpt
+343,1,0,0,Debilidad importante,Estudio correlacional de padres en un centro de Cochabamba; conclusion sobre relacion calidad de vida-bienestar sin fuerte extrapolacion.,codex_gpt
+344,1,1,1,FF con reconocimiento,Cuasi-experimento educativo con dos grupos; reconoce limitaciones de diseno/evaluacion y concluye eficacia de material audiovisual.,codex_gpt
+345,1,0,1,FF clasica,Estudio no experimental de docentes de Achocalla; concluye relacion inversa resiliencia-mobbing con alcance general local sin cautela.,codex_gpt
+346,1,1,0,Debilidad importante,Corte transversal en dos unidades de colposcopia; reconoce tamano limitado/aceptabilidad y conclusion sobre prevalencia y necesidad de estudios.,codex_gpt
