@@ -17,6 +17,25 @@
   header a { color: var(--primary); text-decoration: none; font-size: 13px; }
   header a:hover { text-decoration: underline; }
 
+  .registro-overlay {
+    position: fixed; inset: 0; z-index: 1200; background: rgba(15, 23, 42, 0.48);
+    display: flex; align-items: center; justify-content: center; padding: 16px;
+  }
+  .registro-card {
+    width: min(520px, 100%); background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22); padding: 20px;
+  }
+  .registro-card h2 { margin: 0 0 8px; font-size: 20px; }
+  .registro-card p { margin: 0 0 14px; color: var(--muted); font-size: 14px; line-height: 1.45; }
+  .registro-grid { display: grid; gap: 12px; }
+  .registro-grid label { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+  .registro-grid input {
+    width: 100%; padding: 10px 11px; font-size: 14px; border: 1px solid var(--line);
+    border-radius: 6px; color: var(--fg);
+  }
+  .registro-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+  .registro-note { font-size: 12px; color: var(--muted); }
+
   .popover-revisores {
     position: fixed; top: 50px; right: 12px; z-index: 1000;
     background: var(--card); border: 1px solid var(--line); border-radius: 8px;
@@ -191,5 +210,6 @@
   @media (max-width: 900px) {
     main { grid-template-columns: 1fr; height: auto; }
     .pdf-panel { height: 60vh; }
+    .registro-card { padding: 16px; }
   }
 </style>

@@ -24,12 +24,16 @@ Esta es la superficie pensada para compartir evidencia verificable a terceros, i
 - expone los `346` registros auditables;
 - permite abrir y descargar cada PDF copiado al sitio;
 - muestra metadatos, veredictos IA, contraste humano y trazabilidad;
+- incluye un `Panel auditor` para ensayos locales y un enlace directo a la app central de auditoria;
 - se alimenta desde `04_INVESTIGACION_REPO/tabla_validacion_humano_vs_ia_auditables_346.csv`.
 
 Archivos clave:
 
 - `index.html`
 - `app.js`
+- `auditor.html`
+- `auditor.js`
+- `site-config.js`
 - `scripts/build_public_catalog.py`
 - `scripts/anonymize_public_pdfs.py`
 - `public_data/auditables_346.json`

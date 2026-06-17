@@ -45,14 +45,16 @@ http://localhost:8016/
 ### Publicacion en GitHub Pages
 
 1. Confirmar que `index.html`, `app.js`, `public_data/` y `public_pdfs/` quedaron actualizados.
-2. Hacer commit y push del branch correspondiente.
-3. En GitHub: `Settings -> Pages`.
-4. Publicar desde `main` y `/root`, o desde el branch que uses para Pages.
-5. Verificar en la URL publica que:
+2. Si se actualizo la segunda vista de ensayo, incluir tambien `auditor.html`, `auditor.js` y `site-config.js`.
+3. Hacer commit y push del branch correspondiente.
+4. En GitHub: `Settings -> Pages`.
+5. Publicar desde `main` y `/root`, o desde el branch que uses para Pages.
+6. Verificar en la URL publica que:
    - cargan `346` casos;
    - cargan `346` PDFs publicos;
    - `0` faltantes;
-   - se puede abrir al menos un PDF.
+   - se puede abrir al menos un PDF;
+   - `auditor.html` muestre el formulario de ensayo local y el enlace a la app central.
 
 ## 1. Pre-requisitos
 

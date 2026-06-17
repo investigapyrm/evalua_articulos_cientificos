@@ -93,3 +93,94 @@
 
 * Mantener los KPIs publicos anclados al manuscrito final y no a un resumen auxiliar de revisores parciales.
 * Si se publica un nuevo corte del articulo, actualizar primero `reference_metrics` y luego regenerar el catalogo.
+
+## 2026-06-17 08:10
+
+### Proyecto
+
+* Nombre: evalua_articulos_cientificos
+* Cliente o institucion: InvestigapyRM / paquete de replicacion para DADOS
+* Ruta local: `/tmp/evalua_articulos_cientificos_target`
+* Repositorio: `https://github.com/investigapyrm/evalua_articulos_cientificos`
+* URL publica: `https://investigapyrm.github.io/evalua_articulos_cientificos/`
+* Responsable: Codex con supervision de Diego
+* Version: main
+
+### Objetivo de la intervencion
+
+* Quitar la nota redundante de metricas del sitio publico y agregar una segunda vista de auditoria que muestre el protocolo de botones y conduzca al guardado de nuevos juzgamientos.
+
+### Diagnostico inicial
+
+* La portada publica seguia mostrando un texto largo bajo los KPIs que no aportaba informacion nueva.
+* El sitio publicado no dejaba visible el panel con botones A/B/C/D ni orientaba bien a un nuevo auditor sobre como registrarse y guardar ensayos.
+* La app de Apps Script ya guardaba calificaciones, pero el ingreso seguia dependiendo de un `prompt` y no tomaba bien el caso seleccionado desde Pages.
+
+### Acciones realizadas
+
+* Se actualizo `index.html` para:
+  * retirar la nota explicativa larga de metricas;
+  * agregar botones `Panel auditor` y `App de auditoria`.
+* Se actualizo `app.js` para:
+  * abrir un caso especifico via `?case=`;
+  * agregar `Ensayar este caso` y `Auditar con guardado` en el panel de detalle.
+* Se agregaron `auditor.html`, `auditor.js` y `site-config.js` para una segunda vista publica de auditoria con:
+  * registro local de auditor;
+  * botones A/B/C/D visibles;
+  * guardado local por navegador;
+  * exportacion CSV;
+  * enlace a la web app central de Apps Script.
+* Se actualizaron `apps_script/Index.html` y `apps_script/styles.html` para:
+  * reemplazar el alta por `prompt` por una pantalla de registro;
+  * aceptar `?revisor=` y `?pdf_id=` desde la URL;
+  * mantener el lenguaje visible en `referencia`.
+* Se ajustaron `README.md` y `DEPLOY.md` para documentar la nueva superficie `auditor.html`.
+
+### Archivos modificados
+
+* `index.html`
+* `app.js`
+* `auditor.html`
+* `auditor.js`
+* `site-config.js`
+* `apps_script/Index.html`
+* `apps_script/styles.html`
+* `README.md`
+* `DEPLOY.md`
+* `BITACORA.md`
+
+### Comandos o scripts ejecutados
+
+* `node --check app.js`
+* `node --check auditor.js`
+* `python3 -m http.server 8019`
+* `npx playwright screenshot --browser=chromium --viewport-size=1440,2200 http://127.0.0.1:8019/ /tmp/califica_public_20260617.png`
+* `npx playwright screenshot --browser=chromium --viewport-size=1440,2200 http://127.0.0.1:8019/auditor.html /tmp/califica_auditor_20260617.png`
+
+### Resultados verificados
+
+* La vista publica ya no muestra la nota larga de metricas.
+* La portada publica ofrece acceso directo al panel auditor y a la app central de guardado.
+* `auditor.html` expone el protocolo A/B/C/D, registro local, guardado local y exportacion CSV.
+* La app central queda preparada para abrir con auditor y caso preseleccionado una vez que se vuelva a publicar la web app de Apps Script.
+
+### Pruebas realizadas
+
+* Validacion sintactica de `app.js` y `auditor.js`.
+* Verificacion visual local de `index.html` y `auditor.html` con capturas Playwright.
+
+### Pendientes
+
+* Empujar este ajuste a `main`.
+* Esperar propagacion de GitHub Pages y confirmar que sirva `auditor.html`.
+* Publicar de nuevo la web app de Apps Script para activar el nuevo registro visual y los query params.
+
+### Riesgos
+
+* `auditor.html` guarda ensayos en el navegador local; no sustituye por si sola la base central en Google Sheets.
+* La mejora de la app de Apps Script no queda operativa hasta hacer `clasp push` y nueva implementacion.
+
+### Recomendaciones
+
+* Mantener dos superficies claramente separadas: evidencia publica en Pages y captura central en Apps Script.
+* Si cambia la URL de la app central, actualizar solo `site-config.js`.

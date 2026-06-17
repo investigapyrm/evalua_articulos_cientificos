@@ -16,13 +16,35 @@ const VIEWER_HEIGHTS = {
   large: '1120px',
 };
 
+function centralAuditorUrl(record = null) {
+  const raw = window.SITE_CONFIG?.centralAuditorUrl || '';
+  if (!raw) return '';
+  try {
+    const url = new URL(raw);
+    if (record?.pdf_id) url.searchParams.set('pdf_id', String(record.pdf_id));
+    url.searchParams.set('source', 'pages');
+    return url.toString();
+  } catch (error) {
+    return raw;
+  }
+}
+
+function auditorTrialUrl(record = null) {
+  const url = new URL('auditor.html', window.location.href);
+  if (record?.pdf_id) url.searchParams.set('case', String(record.pdf_id));
+  return url.toString();
+}
+
 async function loadData() {
   const res = await fetch('public_data/auditables_346.json');
   if (!res.ok) throw new Error(`No se pudo cargar el catalogo: ${res.status}`);
   state.data = await res.json();
   state.data.records = shuffleRecords(state.data.records.slice(), getSessionSeed());
   state.filtered = state.data.records.slice();
-  if (state.filtered.length) state.selectedId = state.filtered[0].pdf_id;
+  const requested = Number(new URLSearchParams(window.location.search).get('case') || '');
+  if (requested && state.filtered.some((record) => Number(record.pdf_id) === requested)) {
+    state.selectedId = requested;
+  } else if (state.filtered.length) state.selectedId = state.filtered[0].pdf_id;
 }
 
 function getSessionSeed() {
@@ -290,6 +312,8 @@ function renderDetail() {
         <button class="btn btn-secondary nav-case" type="button" data-nav="prev">Caso anterior</button>
         <button class="btn btn-secondary nav-case" type="button" data-nav="random">Otro caso</button>
         <button class="btn btn-secondary nav-case" type="button" data-nav="next">Siguiente caso</button>
+        <a class="btn btn-secondary" href="${auditorTrialUrl(record)}">Ensayar este caso</a>
+        <a class="btn btn-secondary" href="${centralAuditorUrl(record) || '#'}" target="_blank" rel="noopener">Auditar con guardado</a>
         ${
           record.pdf_available
             ? `<a class="btn" href="${record.pdf_public_path}" target="_blank" rel="noopener">Abrir PDF</a>
@@ -462,6 +486,13 @@ function bindControls() {
   if (topReset) topReset.addEventListener('click', resetAllFilters);
 }
 
+function syncStaticLinks() {
+  const link = document.getElementById('central-auditor-link');
+  if (!link) return;
+  const href = centralAuditorUrl();
+  if (href) link.href = href;
+}
+
 function renderHeaderMeta() {
   document.getElementById('catalog-size').textContent = `${state.data.meta.record_count} casos auditables`;
   document.getElementById('pdf-size').textContent = `${state.data.meta.pdf_available_count} PDF publicos`;
@@ -471,6 +502,7 @@ function renderHeaderMeta() {
 async function boot() {
   try {
     await loadData();
+    syncStaticLinks();
     syncViewerHeight();
     renderHeaderMeta();
     renderStats();

@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panel auditor de referencia</title>
+  <meta name="description" content="Vista de ensayo para nuevos auditores de referencia con formulario de juzgamiento sobre los casos auditables.">
+  <style>
+    :root {
+      --bg: #eef3f8;
+      --surface: #ffffff;
+      --surface-2: #f7fbff;
+      --ink: #132033;
+      --muted: #5c6b7b;
+      --line: #d7e0ea;
+      --accent: #0f6cbd;
+      --accent-strong: #084b84;
+      --danger: #aa2e25;
+      --warning: #9a6700;
+      --success: #1f6f43;
+      --shadow: 0 10px 30px rgba(19, 32, 51, 0.08);
+      --viewer-height: 860px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: linear-gradient(180deg, #f7fbff 0%, var(--bg) 100%);
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    button, input, textarea { font: inherit; }
+    a { color: var(--accent-strong); }
+
+    .shell {
+      width: min(1620px, calc(100vw - 24px));
+      margin: 0 auto;
+      padding: 16px 0 32px;
+    }
+
+    .hero,
+    .sidebar,
+    .panel,
+    .panel-soft {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 20px 24px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 3vw, 42px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 980px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .hero-links,
+    .toolbar,
+    .quick-actions,
+    .viewer-tools,
+    .judge-actions,
+    .summary-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .hero-meta,
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .meta-card,
+    .summary-card {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      padding: 14px;
+      min-height: 96px;
+    }
+
+    .meta-label,
+    .summary-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .meta-value,
+    .summary-value {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .summary-hint {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 14px;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .btn:hover { background: var(--accent-strong); }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--accent-strong);
+    }
+
+    .btn-secondary:hover { background: var(--surface-2); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--accent-strong);
+      border-color: var(--line);
+    }
+
+    .layout {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 16px;
+      padding: 16px;
+      display: grid;
+      gap: 16px;
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+    }
+
+    .panel,
+    .panel-soft {
+      padding: 16px;
+    }
+
+    .panel-soft {
+      background: var(--surface-2);
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .section-head h2,
+    .section-head h3,
+    .sidebar h2,
+    .sidebar h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .profile-grid,
+    .protocol-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .field input,
+    .field textarea,
+    .search-box input {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .field textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    .search-box {
+      display: grid;
+      gap: 6px;
+    }
+
+    .queue-list,
+    .saved-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .queue-item,
+    .saved-item {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 12px;
+      cursor: pointer;
+    }
+
+    .queue-item:hover,
+    .queue-item.is-active,
+    .saved-item:hover {
+      border-color: var(--accent);
+      background: #f3f8fe;
+    }
+
+    .queue-top,
+    .saved-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .queue-id,
+    .saved-id {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .queue-title,
+    .saved-title {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .queue-meta,
+    .saved-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-danger { color: var(--danger); border-color: rgba(170, 46, 37, 0.28); }
+    .badge-warning { color: var(--warning); border-color: rgba(154, 103, 0, 0.28); }
+    .badge-success { color: var(--success); border-color: rgba(31, 111, 67, 0.28); }
+    .badge-muted { color: var(--muted); }
+
+    .queue-status,
+    .save-status {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .viewer-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .viewer-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .viewer-path {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .segmented,
+    .choice-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .segmented button,
+    .choice-row button,
+    .d-grid button {
+      min-height: 42px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .segmented button.is-active,
+    .choice-row button.is-active,
+    .d-grid button.is-active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .pdf-frame {
+      width: 100%;
+      height: var(--viewer-height);
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .placeholder {
+      border: 1px dashed var(--line);
+      padding: 24px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .judge-grid {
+      display: grid;
+      grid-template-columns: 1.3fr minmax(320px, 0.9fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .judge-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .criterion {
+      display: grid;
+      gap: 10px;
+    }
+
+    .criterion h3,
+    .protocol-card h4,
+    .compare-card h4 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .criterion p,
+    .protocol-card p,
+    .compare-card p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .d-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .d-grid button:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .protocol-card,
+    .compare-card {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .compare-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .compare-table th,
+    .compare-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .compare-table th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .compare-table td.right,
+    .compare-table th.right {
+      text-align: right;
+    }
+
+    .alert {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 13px;
+    }
+
+    .alert-success {
+      border-color: rgba(31, 111, 67, 0.28);
+      color: var(--success);
+    }
+
+    .alert-warning {
+      border-color: rgba(154, 103, 0, 0.28);
+      color: var(--warning);
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    [hidden] { display: none !important; }
+
+    @media (max-width: 1180px) {
+      .layout,
+      .judge-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body { font-size: 17px; }
+      .shell { width: min(100vw, calc(100vw - 12px)); padding-top: 8px; }
+      .hero,
+      .sidebar,
+      .panel,
+      .panel-soft { padding: 14px; }
+      .hero-top,
+      .viewer-head,
+      .section-head { flex-direction: column; }
+      .hero-meta,
+      .summary-grid,
+      .d-grid { grid-template-columns: 1fr; }
+      .pdf-frame { height: 70vh; }
+      .btn,
+      .field input,
+      .field textarea,
+      .search-box input,
+      .choice-row button,
+      .d-grid button,
+      .segmented button {
+        min-height: 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>Panel auditor de referencia</h1>
+          <p>
+            Vista de ensayo para nuevos auditores. Aqui puedes registrarte, revisar un caso,
+            marcar A, B, C y D con los mismos botones del protocolo y guardar tus juzgamientos en este navegador.
+          </p>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-card">
+            <div class="meta-label">Auditor</div>
+            <div id="hero-reviewer" class="meta-value">—</div>
+          </div>
+          <div class="meta-card">
+            <div class="meta-label">Guardados locales</div>
+            <div id="hero-saved" class="meta-value">0</div>
+          </div>
+          <div class="meta-card">
+            <div class="meta-label">Pendientes locales</div>
+            <div id="hero-pending" class="meta-value">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-links">
+        <a class="btn btn-secondary" href="./">Volver al catalogo</a>
+        <a id="hero-central-link" class="btn" href="#" target="_blank" rel="noopener">Abrir app con guardado central</a>
+        <a id="hero-repo-link" class="btn btn-secondary" href="#" target="_blank" rel="noopener">Repositorio</a>
+        <button id="export-csv-top" class="btn btn-secondary" type="button">Exportar mis guardados</button>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <section class="panel-soft">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Registro</p>
+              <h2>Nuevo auditor</h2>
+            </div>
+          </div>
+          <form id="reviewer-form" class="profile-grid">
+            <label class="field">
+              Nombre o alias
+              <input id="reviewer-name" type="text" maxlength="80" placeholder="Ej. Referencia 03" required>
+            </label>
+            <label class="field">
+              Afiliacion
+              <input id="reviewer-affiliation" type="text" maxlength="120" placeholder="Ej. FACEN / auditor externo">
+            </label>
+            <div class="toolbar">
+              <button class="btn" type="submit">Guardar perfil local</button>
+              <button id="clear-profile" class="btn btn-secondary" type="button">Cambiar auditor</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Trabajo</p>
+              <h3>Tu avance</h3>
+            </div>
+          </div>
+          <div id="summary-grid" class="summary-grid"></div>
+          <div class="summary-actions" style="margin-top: 12px;">
+            <button id="pick-next" class="btn btn-secondary" type="button">Siguiente pendiente</button>
+            <button id="pick-random" class="btn btn-secondary" type="button">Caso aleatorio</button>
+            <button id="export-csv-side" class="btn btn-secondary" type="button">Exportar CSV</button>
+          </div>
+        </section>
+
+        <section class="panel-soft">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Protocolo</p>
+              <h3>Botones de juzgamiento</h3>
+            </div>
+          </div>
+          <div class="protocol-grid">
+            <div class="protocol-card">
+              <h4>A</h4>
+              <p>Muestreo no probabilistico.</p>
+              <div class="choice-row">
+                <button type="button" disabled>Si</button>
+                <button type="button" disabled>No</button>
+              </div>
+            </div>
+            <div class="protocol-card">
+              <h4>B</h4>
+              <p>Reconoce los limites del muestreo.</p>
+              <div class="choice-row">
+                <button type="button" disabled>Si</button>
+                <button type="button" disabled>No</button>
+              </div>
+            </div>
+            <div class="protocol-card">
+              <h4>C</h4>
+              <p>Extrapola o infiere a una poblacion mas amplia.</p>
+              <div class="choice-row">
+                <button type="button" disabled>Si</button>
+                <button type="button" disabled>No</button>
+              </div>
+            </div>
+            <div class="protocol-card">
+              <h4>D</h4>
+              <p>Veredicto integral del caso.</p>
+              <div class="d-grid">
+                <button type="button" disabled>FF clasica</button>
+                <button type="button" disabled>FF con reconocimiento</button>
+                <button type="button" disabled>Debilidad importante</button>
+                <button type="button" disabled>Sin falla relevante</button>
+                <button type="button" disabled>No evaluable</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Cola</p>
+              <h3>Casos para ensayar</h3>
+            </div>
+          </div>
+          <label class="search-box">
+            <span class="muted">Buscar caso</span>
+            <input id="queue-search" type="search" placeholder="case_id, pais, revista, macroarea">
+          </label>
+          <div id="queue-list" class="queue-list"></div>
+        </section>
+      </aside>
+
+      <div class="stack">
+        <section class="panel viewer-card">
+          <div class="viewer-head">
+            <div>
+              <p id="case-label" class="eyebrow">Caso</p>
+              <h2 id="case-title">Cargando caso...</h2>
+              <div id="case-meta" class="muted"></div>
+            </div>
+            <div class="viewer-tools">
+              <a id="detail-catalog-link" class="btn btn-secondary" href="./" rel="noopener">Ver en catalogo</a>
+              <a id="central-case-link" class="btn" href="#" target="_blank" rel="noopener">Auditar con guardado central</a>
+              <a id="open-pdf-link" class="btn btn-secondary" href="#" target="_blank" rel="noopener">Abrir PDF</a>
+              <div class="segmented" aria-label="Tamano del visor PDF">
+                <button type="button" class="viewer-size is-active" data-size="medium">Medio</button>
+                <button type="button" class="viewer-size" data-size="large">Grande</button>
+              </div>
+            </div>
+          </div>
+          <div id="case-alert" class="alert alert-warning" hidden></div>
+          <iframe id="case-frame" class="pdf-frame" title="PDF auditado"></iframe>
+        </section>
+
+        <section class="panel judge-grid">
+          <div class="judge-form">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Juzgamiento</p>
+                <h2>Registrar ensayo de referencia</h2>
+              </div>
+            </div>
+
+            <div class="criterion">
+              <h3>A · Muestreo no probabilistico</h3>
+              <p>Conveniencia, voluntarios, bola de nieve, intencional o consecutivo.</p>
+              <div class="choice-row" data-field="A">
+                <button type="button" data-value="1">Si</button>
+                <button type="button" data-value="0">No</button>
+              </div>
+            </div>
+
+            <div class="criterion">
+              <h3>B · Advierte limites</h3>
+              <p>Reconoce de forma expresa la limitacion del muestreo.</p>
+              <div class="choice-row" data-field="B">
+                <button type="button" data-value="1">Si</button>
+                <button type="button" data-value="0">No</button>
+              </div>
+            </div>
+
+            <div class="criterion">
+              <h3>C · Extrapola o infiere</h3>
+              <p>Generaliza a una poblacion mas amplia que la muestra observada.</p>
+              <div class="choice-row" data-field="C">
+                <button type="button" data-value="1">Si</button>
+                <button type="button" data-value="0">No</button>
+              </div>
+            </div>
+
+            <div class="criterion">
+              <h3>D · Veredicto integral</h3>
+              <p>Clasificacion final del caso segun el protocolo.</p>
+              <div class="d-grid" data-field="D">
+                <button type="button" data-value="FF clasica">FF clasica</button>
+                <button type="button" data-value="FF con reconocimiento">FF con reconocimiento</button>
+                <button type="button" data-value="Debilidad importante">Debilidad importante</button>
+                <button type="button" data-value="Sin falla relevante">Sin falla relevante</button>
+                <button type="button" data-value="No evaluable">No evaluable</button>
+              </div>
+            </div>
+
+            <label class="field">
+              Notas de referencia
+              <textarea id="judge-notes" placeholder="Justificacion breve del juzgamiento"></textarea>
+            </label>
+
+            <div class="judge-actions">
+              <button id="save-judgment" class="btn" type="button">Guardar ensayo local</button>
+              <button id="reset-judgment" class="btn btn-secondary" type="button">Limpiar formulario</button>
+              <button id="next-after-save" class="btn btn-secondary" type="button">Guardar y seguir</button>
+            </div>
+            <div id="save-status" class="save-status"></div>
+          </div>
+
+          <div class="compare-grid">
+            <div class="compare-card">
+              <h4>Que guarda esta vista</h4>
+              <p>
+                Guarda tus ensayos en este navegador y te deja exportarlos en CSV.
+                Si quieres registrar el juicio en la base central compartida, usa el boton azul de auditoria.
+              </p>
+            </div>
+            <div id="post-save-compare" class="compare-card" hidden>
+              <h4>Comparacion posterior al guardado</h4>
+              <table class="compare-table">
+                <thead>
+                  <tr>
+                    <th>Dimension</th>
+                    <th class="right">Tu juicio</th>
+                    <th class="right">Referencia</th>
+                    <th class="right">IA</th>
+                  </tr>
+                </thead>
+                <tbody id="compare-body"></tbody>
+              </table>
+              <div id="compare-badges" class="badge-row"></div>
+              <div id="compare-comment" class="footer-note"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Guardados</p>
+              <h2>Mis juzgamientos locales</h2>
+            </div>
+          </div>
+          <div id="saved-list" class="saved-list"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="site-config.js"></script>
+  <script src="auditor.js"></script>
+</body>
+</html>

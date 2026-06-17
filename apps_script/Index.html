@@ -26,6 +26,26 @@
   <div id="popoverRevisoresBody"><span class="loading"></span> cargando…</div>
 </div>
 
+<div id="registroOverlay" class="registro-overlay" style="display:none;">
+  <div class="registro-card">
+    <h2>Ingresar como auditor de referencia</h2>
+    <p>
+      Registra aqui el nombre corto o alias con el que quedaran guardadas tus evaluaciones.
+      Si vienes desde el catalogo publico, puedes usar el mismo identificador para continuar en la base central.
+    </p>
+    <form id="registroForm" class="registro-grid">
+      <label>
+        Nombre o alias
+        <input id="registroNombre" type="text" maxlength="80" placeholder="Ej. Referencia 04" required>
+      </label>
+      <div class="registro-actions">
+        <button type="submit" class="btn-primary">Entrar</button>
+      </div>
+      <div class="registro-note">Las calificaciones se guardan bajo este nombre en la hoja privada.</div>
+    </form>
+  </div>
+</div>
+
 <main class="main-3col">
 
   <aside class="lista-panel" id="listaPanel">
@@ -61,6 +81,9 @@
 <script>
   // Barra de debug: solo se hace visible si hay un error o si la URL trae ?debug=1
   const _DEBUG_FORCE = /[?&]debug=1/.test(location.search);
+  const QUERY = new URLSearchParams(location.search);
+  const PREFILL_REVISOR = (QUERY.get('revisor') || '').trim();
+  let PREFILL_PDF_ID = (QUERY.get('pdf_id') || '').trim();
   function _dbg(msg, level) {
     try {
       const bar = document.getElementById('debugBar');
@@ -85,25 +108,39 @@
 
   function getRevisor() { return localStorage.getItem(STORAGE_KEY) || ''; }
   function setRevisor(n) {
-    localStorage.setItem(STORAGE_KEY, String(n).trim());
-    document.getElementById('revisorLabel').textContent = '👤 ' + n;
+    const clean = String(n || '').trim();
+    if (!clean) return '';
+    localStorage.setItem(STORAGE_KEY, clean);
+    document.getElementById('revisorLabel').textContent = '👤 ' + clean;
+    document.getElementById('registroOverlay').style.display = 'none';
+    return clean;
   }
   function pedirRevisor() {
-    const a = getRevisor();
-    let n = prompt('Identifícate como revisor (nombre corto o iniciales).\nTus calificaciones se guardarán bajo este nombre.', a || '');
-    if (!n || !n.trim()) {
-      if (a) return a;
-      alert('Necesitamos un identificador del revisor.');
-      return pedirRevisor();
-    }
-    n = n.trim();
-    setRevisor(n);
-    return n;
+    const actualRevisor = PREFILL_REVISOR || getRevisor();
+    if (actualRevisor) return setRevisor(actualRevisor);
+    document.getElementById('registroOverlay').style.display = 'flex';
+    document.getElementById('registroNombre').value = '';
+    document.getElementById('registroNombre').focus();
+    return '';
+  }
+
+  function mostrarRegistroRevisor(valorInicial) {
+    document.getElementById('registroOverlay').style.display = 'flex';
+    document.getElementById('registroNombre').value = valorInicial || getRevisor() || '';
+    document.getElementById('registroNombre').focus();
   }
 
   document.getElementById('lnkCambiarRevisor').addEventListener('click', e => {
     e.preventDefault();
-    pedirRevisor();
+    localStorage.removeItem(STORAGE_KEY);
+    document.getElementById('revisorLabel').textContent = '';
+    mostrarRegistroRevisor('');
+  });
+  document.getElementById('registroForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const nombre = document.getElementById('registroNombre').value.trim();
+    if (!nombre) return;
+    setRevisor(nombre);
     cargarLista();
   });
   google.script.run.withSuccessHandler(url => {
@@ -189,6 +226,7 @@
 
   function cargarLista() {
     const rev = getRevisor() || pedirRevisor();
+    if (!rev) return;
     setRevisor(rev);
     document.getElementById('listaPdfs').innerHTML =
       '<li class="lista-loading"><span class="loading"></span> cargando 346 PDFs…</li>';
@@ -207,8 +245,12 @@
             document.getElementById('progreso').textContent =
               d.calificados_por_mi + ' / ' + d.total + ' calificados por ' + d.revisor;
             renderLista();
+            const requested = PREFILL_PDF_ID && listaCompleta.find(x => String(x.pdf_id) === String(PREFILL_PDF_ID));
             const primerPendiente = listaCompleta.find(x => !x.yo_califique);
-            if (primerPendiente) cargarPDF(primerPendiente.pdf_id);
+            if (requested) {
+              cargarPDF(requested.pdf_id);
+              PREFILL_PDF_ID = '';
+            } else if (primerPendiente) cargarPDF(primerPendiente.pdf_id);
             else if (listaCompleta.length) cargarPDF(listaCompleta[0].pdf_id);
           } catch (e) {
             _dbg('Error en handler success: ' + e.message + '\n' + e.stack, 'err');
@@ -274,6 +316,7 @@
   function cargarPDF(pdfId) {
     yaSubmitido = false;
     const rev = getRevisor() || pedirRevisor();
+    if (!rev) return;
     document.getElementById('pdfPanel').innerHTML =
       '<div class="pdf-empty"><span class="loading"></span></div>';
     document.getElementById('formPanel').innerHTML =
@@ -318,7 +361,7 @@
       : '';
 
     return `
-      <h2>Calificación humana</h2>
+      <h2>Calificación de referencia</h2>
       ${aviso}${yaCal}
       <div class="meta">
         PDF <b>#${d.pdf_id}</b> · ${escape_(d.revista || '')} · ${escape_(d.pais || '')} · ${escape_(d.macroarea || '')} · ${escape_(d.anio || '')}
@@ -436,9 +479,9 @@
           }
         })
         .withFailureHandler(err => {
-          const msg = err && err.message || String(err);
-          _dbg('submitCalificacion FALLO: ' + msg, 'err');
-          alert('Error al guardar: ' + msg);
+        const msg = err && err.message || String(err);
+        _dbg('submitCalificacion FALLO: ' + msg, 'err');
+        alert('Error al guardar: ' + msg);
           yaSubmitido = false;
           restaurarBoton(btn);
         })
@@ -460,7 +503,7 @@
     if (frm) frm.style.display = 'none';
     const comparaciones = c.comparaciones || [];
     const filas = comparaciones.map(r => {
-      const tipo = r.tipo === 'ia_base' ? 'IA base' : (r.tipo === 'modelo' ? 'Modelo' : 'Humano');
+      const tipo = r.tipo === 'ia_base' ? 'IA base' : (r.tipo === 'modelo' ? 'Modelo' : 'Referencia');
       return `<tr>
         <td>
           <b>${escape_(nombreRevisor(r.revisor))}</b>
@@ -477,7 +520,7 @@
       <div class="contraste">
         <h3>Comparación contra IA y revisores · <b>${escape_(getRevisor())}</b></h3>
         <div class="tu-eval">
-          Tu evaluación: A=<b>${escape_(c.A_humano)}</b> · B=<b>${escape_(c.B_humano)}</b> ·
+          Tu evaluacion de referencia: A=<b>${escape_(c.A_humano)}</b> · B=<b>${escape_(c.B_humano)}</b> ·
           C=<b>${escape_(c.C_humano)}</b> · D=<b>${escape_(c.D_humano)}</b>
         </div>
         <table class="comparacion-revisores">
@@ -520,9 +563,11 @@
   // Arranque
   try {
     _dbg('Arranque: DOM cargado, esperando click en revisor');
-    setRevisor(getRevisor() || pedirRevisor());
-    _dbg('Revisor establecido: ' + getRevisor());
-    cargarLista();
+    const revisorInicial = pedirRevisor();
+    if (revisorInicial) {
+      _dbg('Revisor establecido: ' + getRevisor());
+      cargarLista();
+    }
   } catch (e) {
     _dbg('Error en arranque: ' + e.message, 'err');
   }
