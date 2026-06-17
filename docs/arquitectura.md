@@ -4,8 +4,8 @@
 ┌────────────────────────────┐         ┌──────────────────────────┐
 │  Google Drive              │         │  Google Sheet privado    │
 │  - carpeta con 346 PDFs    │         │  - hoja "auditables"     │
-│  - articulos_auditables_   │         │      (346 filas, base    │
-│    346.csv                 │         │       auxiliar)          │
+│  - articulos_auditables_   │         │      (346 filas, ground  │
+│    346.csv                 │         │       truth IA)          │
 └─────────────┬──────────────┘         │  - hoja "calificaciones" │
               │                        │      (calificaciones     │
               │ DriveApp.getFileById   │       humanas, append)   │
@@ -25,7 +25,7 @@
                    ▼
               ┌─────────┐
               │ Browser │
-              │ usuario │
+              │  (vos)  │
               └─────────┘
 ```
 

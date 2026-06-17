@@ -11,10 +11,8 @@
  */
 
 // ───────────────────── CONFIG ─────────────────────────────────────────────
-// Complete estos valores en su copia desplegada de Apps Script. No publique IDs
-// privados de Drive/Sheets en repositorios públicos.
-const FOLDER_ID  = 'PEGAR_FOLDER_ID_DE_DRIVE';
-const SHEET_ID   = 'PEGAR_SHEET_ID';
+const FOLDER_ID  = '';
+const SHEET_ID   = '';
 const CSV_URL    = 'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/articulos_auditables_346.csv';
 
 const HOJA_AUDITABLES     = 'auditables';
@@ -48,28 +46,28 @@ function doGet(e) {
   const page = (e && e.parameter && e.parameter.page) || 'index';
   const tpl = HtmlService.createTemplateFromFile(page === 'stats' ? 'DashboardStats' : 'Index');
   return tpl.evaluate()
-    .setTitle('Evalúa artículos científicos')
+    .setTitle('Califica artículos inferenciales')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
-const ADMIN_TOKEN = PropertiesService.getScriptProperties().getProperty('ADMIN_TOKEN') || '';
+const ADMIN_TOKEN = 'cai_admin_x9k2pq_2026';
 
 function _adminEndpoint(p) {
-  if (!ADMIN_TOKEN || p.token !== ADMIN_TOKEN) {
+  if (p.token !== ADMIN_TOKEN) {
     return ContentService.createTextOutput(JSON.stringify({error:'token invalido'}))
       .setMimeType(ContentService.MimeType.JSON);
   }
   const out = {};
   try {
     if (p.fn === 'unificar') {
-      unificar_revisor(p.revisor || 'REVISOR_PRINCIPAL');
+      unificar_revisor(p.revisor || 'DIEGO MEZA');
       out.ok = true; out.fn = 'unificar';
     } else if (p.fn === 'importar_pilotos') {
       importar_pilotos_claude_y_gemini2();
       out.ok = true; out.fn = 'importar_pilotos';
     } else if (p.fn === 'setup_completo') {
-      unificar_revisor(p.revisor || 'REVISOR_PRINCIPAL');
+      unificar_revisor(p.revisor || 'DIEGO MEZA');
       importar_pilotos_claude_y_gemini2();
       out.ok = true; out.fn = 'setup_completo';
     } else if (p.fn === 'comparacion_humano_ia') {
@@ -231,11 +229,16 @@ function _adminEndpoint(p) {
       );
       out.importadas = r.ok;
       out.saltadas = r.skipped;
-    } else if (p.fn === 'importar_imputacion_revisor_notebooklm') {
-      // Función reservada para proyectos que decidan cargar un CSV propio de
-      // imputación. No se incluye un archivo de imputación en este repositorio.
-      out.ok = false;
-      out.error = 'Importacion de imputaciones desactivada en la version publica.';
+    } else if (p.fn === 'importar_imputacion_diego_notebooklm') {
+      // Escenario imputado: completa faltantes de DIEGO MEZA a partir de
+      // NotebookLM, marcado en notas para no confundir con observaciones reales.
+      out.imputadas_borradas = _borrarFilasImputadasDiegoNotebookLM_();
+      const r = importarEvaluacionesIA(
+        'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/imputacion_diego_meza_notebooklm_proporcional.csv',
+        'DIEGO MEZA'
+      );
+      out.importadas = r.ok;
+      out.saltadas = r.skipped;
     } else if (p.fn === 'importar_modelos_346') {
       // Atomico para la app web: refresca las revisiones IA externas
       // que se comparan en el dashboard.
@@ -335,7 +338,7 @@ function importar_modelos_346() {
 
 // ───────────────────── SETUP / MIGRACIÓN ─────────────────────────────────
 function setup_inicial() {
-  const ss = SpreadsheetApp.create('evalua_articulos_cientificos — calificaciones');
+  const ss = SpreadsheetApp.create('evalua_articulos_cientificos - calificaciones');
   Logger.log('SHEET creado: ' + ss.getId() + ' (pega este ID en SHEET_ID)');
 
   const resp = UrlFetchApp.fetch(CSV_URL, { muteHttpExceptions: true });
@@ -792,7 +795,7 @@ function _borrarFilasRevisor_(revisor) {
   return vals.length - keep.length;
 }
 
-function _borrarFilasImputadasRevisorNotebookLM_() {
+function _borrarFilasImputadasDiegoNotebookLM_() {
   const ss = SpreadsheetApp.openById(SHEET_ID);
   const sh = ss.getSheetByName(HOJA_CALIFICACIONES);
   if (!sh || sh.getLastRow() < 2) return 0;
@@ -806,7 +809,7 @@ function _borrarFilasImputadasRevisorNotebookLM_() {
   const keep = vals.filter(row => {
     const rev = String(row[idxRev] || '').trim();
     const notas = String(row[idxNotas] || '').trim();
-    return !(rev === 'REVISOR_PRINCIPAL' && notas.indexOf('IMPUTADO_NOTEBOOKLM_PROPORCIONAL') === 0);
+    return !(rev === 'DIEGO MEZA' && notas.indexOf('IMPUTADO_NOTEBOOKLM_PROPORCIONAL') === 0);
   });
   sh.getRange(2, 1, lastRow - 1, lastCol).clearContent();
   if (keep.length) sh.getRange(2, 1, keep.length, lastCol).setValues(keep);
@@ -1178,7 +1181,7 @@ function diagnostico_lista() {
  */
 function unificar_revisor(nombreReal) {
   if (!nombreReal || !String(nombreReal).trim()) {
-    throw new Error('Pasale tu nombre real, ej: unificar_revisor("REVISOR_PRINCIPAL")');
+    throw new Error('Pasale tu nombre real, ej: unificar_revisor("DIEGO MEZA")');
   }
   nombreReal = String(nombreReal).trim();
   const ss = SpreadsheetApp.openById(SHEET_ID);

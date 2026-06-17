@@ -17,3 +17,8 @@ package-lock.json
 
 # Logs
 *.log
+
+# Artefactos locales de verificacion y PDFs originales no anonimizados
+public_pdfs/
+anonymization_debug*/
+playwright_*.png

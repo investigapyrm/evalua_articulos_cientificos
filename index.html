@@ -1,232 +1,658 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>evalua_articulos_cientificos</title>
-<meta name="description" content="App web de evaluación humana doble ciego para auditar artículos cuantitativos sudamericanos y contrastar el juicio humano con la calificación de la IA.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verificacion publica de articulos auditados</title>
+  <meta name="description" content="Catalogo publico verificable de los articulos auditados en el estudio sobre generalizacion inferencial en revistas sudamericanas.">
+  <style>
+    :root {
+      --bg: #eef3f8;
+      --surface: #ffffff;
+      --surface-2: #f8fbff;
+      --ink: #132033;
+      --muted: #5c6b7b;
+      --line: #d7e0ea;
+      --accent: #0f6cbd;
+      --accent-strong: #084b84;
+      --danger: #aa2e25;
+      --warning: #9a6700;
+      --success: #1f6f43;
+      --shadow: 0 10px 30px rgba(19, 32, 51, 0.08);
+      --viewer-height: 860px;
+    }
 
-<style>
-  :root {
-    --bg: #f8fafc; --fg: #1e293b; --card: #ffffff; --line: #e2e8f0;
-    --primary: #2563eb; --primary-hover: #1d4ed8; --primary-fg: #ffffff;
-    --muted: #64748b; --accent: #15803d;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg);
-               font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-               line-height: 1.6; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: linear-gradient(180deg, #f7fbff 0%, var(--bg) 100%);
+      color: var(--ink);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.45;
+    }
 
-  .container { max-width: 880px; margin: 0 auto; padding: 24px; }
+    a { color: var(--accent-strong); }
+    button, input, select { font: inherit; }
 
-  header { padding: 48px 24px 32px; text-align: center; border-bottom: 1px solid var(--line); background: var(--card); }
-  header h1 { margin: 0 0 12px; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
-  header .subtitle { color: var(--muted); font-size: 16px; max-width: 640px; margin: 0 auto; }
+    .shell {
+      width: min(1600px, calc(100vw - 24px));
+      margin: 0 auto;
+      padding: 16px 0 32px;
+    }
 
-  .cta { display: flex; flex-direction: column; align-items: center; gap: 12px; margin: 36px 0 12px; }
-  .btn-primary {
-    background: var(--primary); color: var(--primary-fg);
-    padding: 14px 36px; font-size: 16px; font-weight: 600;
-    text-decoration: none; border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(37,99,235,.4);
-    transition: background .15s;
-  }
-  .btn-primary:hover { background: var(--primary-hover); }
-  .cta-note { font-size: 13px; color: var(--muted); }
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      padding: 20px 24px;
+      display: grid;
+      gap: 16px;
+    }
 
-  .grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px; margin-top: 32px;
-  }
-  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 8px;
-          padding: 18px; text-align: center; }
-  .stat .num { font-size: 26px; font-weight: 700; color: var(--primary); }
-  .stat .lbl { font-size: 12px; color: var(--muted); text-transform: uppercase;
-               letter-spacing: 0.04em; margin-top: 4px; }
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+    }
 
-  section { margin-top: 40px; }
-  section h2 { font-size: 20px; margin: 0 0 12px; padding-bottom: 8px;
-               border-bottom: 1px solid var(--line); }
+    .hero-title h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 3vw, 42px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
 
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px;
-          padding: 18px; }
+    .hero-title p {
+      margin: 0;
+      max-width: 980px;
+      color: var(--muted);
+      font-size: 15px;
+    }
 
-  .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-           gap: 12px; margin-top: 16px; }
-  .link-card { background: var(--card); border: 1px solid var(--line); border-radius: 8px;
-               padding: 14px; text-decoration: none; color: var(--fg); transition: all .15s;
-               display: block; }
-  .link-card:hover { border-color: var(--primary); transform: translateY(-1px); }
-  .link-card .title { font-weight: 600; font-size: 14px; }
-  .link-card .desc { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
-  th { background: #f1f5f9; font-weight: 600; }
-  td.right { text-align: right; }
+    .meta-pill {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      padding: 8px 12px;
+      min-width: 160px;
+    }
 
-  code { background: #f1f5f9; padding: 1px 6px; border-radius: 3px;
-         font-family: SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: 13px; }
+    .meta-label {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
 
-  footer { margin-top: 64px; padding: 24px; text-align: center; color: var(--muted);
-           font-size: 13px; border-top: 1px solid var(--line); background: var(--card); }
-  footer a { color: var(--muted); }
-</style>
+    .meta-value {
+      margin-top: 4px;
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .hero-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      min-height: 44px;
+    }
+
+    .btn:hover { background: var(--accent-strong); }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--accent-strong);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-2);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      padding: 14px;
+      min-height: 112px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .stat-hint {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .layout {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .sidebar,
+    .main-panel,
+    .summary-panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 16px;
+      max-height: calc(100vh - 32px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-head,
+    .panel-head {
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .sidebar-head h2,
+    .panel-head h2,
+    .panel-head h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .filters {
+      display: grid;
+      gap: 10px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-2);
+    }
+
+    .filters label {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .filters input,
+    .filters select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 10px 11px;
+      color: var(--ink);
+      min-height: 44px;
+    }
+
+    .results-list {
+      overflow: auto;
+      padding: 10px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .result-item {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 12px;
+      cursor: pointer;
+    }
+
+    .result-item:hover,
+    .result-item.is-active {
+      border-color: var(--accent);
+      background: #f3f8fe;
+    }
+
+    .result-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .result-id {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .result-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+
+    .result-meta,
+    .result-pdf {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .main-stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .detail-panel {
+      padding: 18px;
+    }
+
+    .detail-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .detail-head h2 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.15;
+    }
+
+    .detail-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .detail-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-width: 220px;
+      justify-content: flex-end;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .detail-card,
+    .viewer-card,
+    .summary-panel {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+    }
+
+    .detail-card {
+      padding: 16px;
+    }
+
+    .detail-card-wide {
+      grid-column: 1 / -1;
+    }
+
+    .detail-card h3,
+    .viewer-head h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid currentColor;
+      background: #fff;
+    }
+
+    .badge-danger { color: var(--danger); }
+    .badge-warning { color: var(--warning); }
+    .badge-success { color: var(--success); }
+    .badge-muted { color: var(--muted); }
+    .badge-neutral { color: var(--accent-strong); }
+
+    .mini-table,
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .mini-table th,
+    .mini-table td,
+    .summary-table th,
+    .summary-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th,
+    .summary-table th {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .right { text-align: right !important; }
+
+    .detail-list {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 8px 12px;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .detail-list dt {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .detail-list dd {
+      margin: 0;
+    }
+
+    .text-block {
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .viewer-card {
+      padding: 16px;
+    }
+
+    .viewer-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .viewer-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .segmented {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .segmented button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      padding: 8px 12px;
+      min-height: 40px;
+      cursor: pointer;
+    }
+
+    .segmented button.is-active {
+      border-color: var(--accent);
+      background: #eaf3fd;
+      color: var(--accent-strong);
+      font-weight: 700;
+    }
+
+    .viewer-path {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+    }
+
+    .pdf-frame {
+      width: 100%;
+      height: var(--viewer-height);
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .summary-panel {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .summary-body {
+      padding: 0 16px 16px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    .placeholder,
+    .missing-note {
+      border: 1px dashed var(--line);
+      background: #fff;
+      color: var(--muted);
+      padding: 18px;
+      font-size: 14px;
+    }
+
+    .empty-state {
+      margin: 10px;
+    }
+
+    .error {
+      width: min(960px, calc(100vw - 24px));
+      margin: 16px auto;
+      background: #fff3f1;
+      border: 1px solid #f1c2bb;
+      color: var(--danger);
+      padding: 14px 16px;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 1180px) {
+      .stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; max-height: none; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .detail-card-wide { grid-column: auto; }
+    }
+
+    @media (max-width: 720px) {
+      body { font-size: 17px; }
+      .shell { width: min(100vw, calc(100vw - 12px)); padding-top: 8px; }
+      .hero { padding: 16px; }
+      .hero-top,
+      .detail-head,
+      .viewer-head { flex-direction: column; }
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .detail-actions { justify-content: flex-start; min-width: 0; }
+      .pdf-frame { height: 70vh; }
+      .btn,
+      .filters input,
+      .filters select {
+        min-height: 48px;
+      }
+    }
+  </style>
 </head>
-<body>
+<body data-ready="false">
+  <div id="boot-error" class="error" hidden></div>
 
-<header>
-  <div class="container">
-    <h1>Evalúa artículos científicos</h1>
-    <p class="subtitle">
-      Evaluación doble ciego y comparación multi-modelo de los <b>346 artículos cuantitativos auditables</b>
-      de una auditoría documental sobre inferencia y generalización en estudios cuantitativos.
-      Contrasta revisiones humanas y auditorías asistidas por IA
-      (Codex/GPT, Gemini 2.5 Flash y Claude Haiku, protocolo v4.1) y reporta el acuerdo inter-rater.
-    </p>
+  <div class="shell">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="hero-title">
+          <h1>Verificacion publica de articulos auditados</h1>
+          <p>
+            Catalogo verificable de los 346 casos auditables del estudio sobre generalizacion inferencial
+            en revistas sudamericanas de acceso abierto. Cada registro expone trazabilidad metodologica,
+            veredicto IA, contraste humano disponible y acceso directo a la copia publica del PDF.
+          </p>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-pill">
+            <div class="meta-label">Casos</div>
+            <div id="catalog-size" class="meta-value">—</div>
+          </div>
+          <div class="meta-pill">
+            <div class="meta-label">PDF publicos</div>
+            <div id="pdf-size" class="meta-value">—</div>
+          </div>
+          <div class="meta-pill">
+            <div class="meta-label">Pendientes</div>
+            <div id="missing-size" class="meta-value">—</div>
+          </div>
+        </div>
+      </div>
 
-    <div class="cta">
-      <a class="btn-primary"
-         href="https://script.google.com/macros/s/AKfycby-SQDUuxxpHl2ApM3xosLbFrxAvxxyZY7yFRhU7fytgqn_NS1MO0uqq5piKcHTc1fLvg/exec">
-         Abrir la app de calificación →
-      </a>
-      <span class="cta-note">Reemplace este enlace por la URL de despliegue de Apps Script de su propia copia.</span>
+      <div class="hero-links">
+        <a class="btn" href="https://github.com/investigapyrm/evalua_articulos_cientificos" target="_blank" rel="noopener">Repositorio</a>
+        <a class="btn btn-secondary" href="public_data/auditables_346.json" target="_blank" rel="noopener">JSON publico</a>
+        <a class="btn btn-secondary" href="public_data/anonymized_pdf_manifest.json" target="_blank" rel="noopener">Manifiesto de anonimización</a>
+        <button id="reset-filters-top" class="btn btn-secondary" type="button">Limpiar filtros</button>
+      </div>
+      <div id="active-filters" class="footer-note">Sin filtros activos.</div>
+
+      <div id="stats-grid" class="stats-grid"></div>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-head">
+          <h2>Catalogo</h2>
+          <div id="result-count" class="footer-note">—</div>
+        </div>
+
+        <div class="filters">
+          <label>
+            Buscar
+            <input id="search" type="search" placeholder="case_id, pais, macroarea, veredicto">
+          </label>
+          <label>
+            Pais
+            <select id="filter-country"></select>
+          </label>
+          <label>
+            Macroarea
+            <select id="filter-area"></select>
+          </label>
+          <label>
+            Veredicto
+            <select id="filter-verdict"></select>
+          </label>
+          <label>
+            Disponibilidad del PDF
+            <select id="filter-availability">
+              <option value="ALL">Todos</option>
+              <option value="AVAILABLE">PDF disponible</option>
+              <option value="MISSING">PDF pendiente</option>
+            </select>
+          </label>
+          <button id="reset-filters" class="btn btn-secondary" type="button">Limpiar filtros</button>
+        </div>
+
+        <div id="empty-state" class="placeholder empty-state" hidden>No hay casos que coincidan con los filtros actuales.</div>
+        <div id="results-list" class="results-list"></div>
+      </aside>
+
+      <div class="main-stack">
+        <section class="main-panel">
+          <div id="detail-panel" class="detail-panel">
+            <div class="placeholder">Cargando catalogo...</div>
+          </div>
+        </section>
+
+        <section class="summary-panel">
+          <div class="panel-head">
+            <h3>Resumen de comparacion humano vs modelos</h3>
+          </div>
+          <div class="summary-body">
+            <div class="table-wrap">
+              <table class="summary-table">
+                <thead>
+                  <tr>
+                    <th>Humano</th>
+                    <th>IA</th>
+                    <th class="right">n</th>
+                    <th class="right">Acuerdo D</th>
+                    <th class="right">Kappa D</th>
+                  </tr>
+                </thead>
+                <tbody id="summary-table-body"></tbody>
+              </table>
+            </div>
+            <div class="footer-note">
+              La tabla resume comparaciones cargadas en archivos publicos del repositorio. El catalogo principal
+              se construye desde `tabla_validacion_humano_vs_ia_auditables_346.csv`.
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   </div>
-</header>
 
-<main class="container">
-
-  <section>
-    <h2>El estudio en cifras</h2>
-    <div class="grid">
-      <div class="stat"><div class="num">988</div><div class="lbl">Marco DOAJ 2025</div></div>
-      <div class="stat"><div class="num">277</div><div class="lbl">Muestra estratificada</div></div>
-      <div class="stat"><div class="num">2 062</div><div class="lbl">Auditados con IA</div></div>
-      <div class="stat"><div class="num">346</div><div class="lbl">Auditables (denominador)</div></div>
-      <div class="stat"><div class="num">346</div><div class="lbl">Revisión Codex/GPT completa</div></div>
-      <div class="stat"><div class="num">99</div><div class="lbl">Consenso 3 modelos en D</div></div>
-      <div class="stat"><div class="num">63,5 %</div><div class="lbl">Acuerdo Gemini-Claude</div></div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Comparación de modelos</h2>
-    <div class="card">
-      <table>
-        <thead>
-          <tr><th>Comparación</th><th class="right">n</th><th class="right">Acuerdo D</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Codex/GPT vs Gemini 2.5 Flash</td><td class="right">345</td><td class="right">44,1 %</td></tr>
-          <tr><td>Codex/GPT vs Claude Haiku</td><td class="right">346</td><td class="right">35,0 %</td></tr>
-          <tr><td>Gemini 2.5 Flash vs Claude Haiku</td><td class="right">345</td><td class="right">63,5 %</td></tr>
-          <tr><td>Los tres modelos</td><td class="right">345</td><td class="right">28,7 %</td></tr>
-        </tbody>
-      </table>
-      <p style="margin:12px 0 0;color:var(--muted);font-size:13px;">
-        Gemini tiene 345/346 filas importadas en el corte actual: falta <code>pdf_id 123</code>.
-        El dashboard de la app muestra cobertura, distribución por veredicto, matrices y kappa.
-      </p>
-    </div>
-  </section>
-
-  <section>
-    <h2>Qué califica el humano</h2>
-    <div class="card">
-      <table>
-        <thead>
-          <tr><th>Var</th><th>Pregunta</th><th>Tipo</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><b>A</b></td><td>¿Muestreo no probabilístico? (conveniencia, voluntarios, bola de nieve, intencional, consecutivo)</td><td>binaria</td></tr>
-          <tr><td><b>B</b></td><td>¿Advierte la limitación del muestreo en cualquier parte del texto?</td><td>binaria</td></tr>
-          <tr><td><b>C</b></td><td>¿Extrapola a una población más amplia que la muestra observada?</td><td>binaria</td></tr>
-          <tr><td><b>D</b></td><td>Veredicto integral del juez humano (FF clásica / FF con reconocimiento / DI / SFR)</td><td>categórica</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section>
-    <h2>Métricas del dashboard</h2>
-    <div class="card">
-      <ul style="margin: 0; padding-left: 18px;">
-        <li>Acuerdo simple por dimensión (A, B, C, D).</li>
-        <li><b>Cohen's κ</b> sobre el veredicto integral, corregido por acuerdo esperado por azar.</li>
-        <li>Matriz de confusión 5 × 5 entre revisores, incluyendo <code>No evaluable</code>.</li>
-        <li>Comparación directa Codex/GPT ↔ Gemini ↔ Claude y taxonomía de discrepancias.</li>
-      </ul>
-    </div>
-  </section>
-
-  <section>
-    <h2>Stack y arquitectura</h2>
-    <div class="card">
-      <p>App de una sola pieza en <b>Google Apps Script</b> (sin servidor externo, costo cero):</p>
-      <ul style="margin: 8px 0 0; padding-left: 18px;">
-        <li>PDFs leídos directamente de una <b>carpeta privada de Google Drive</b>.</li>
-        <li>Calificaciones guardadas en un <b>Google Sheet privado</b> (append-only).</li>
-        <li>Ground truth de la IA base (346 filas) cargado desde <code>data/articulos_auditables_346.csv</code>.</li>
-        <li>Revisiones multi-modelo cargadas desde <code>evaluaciones_codex_gpt.csv</code>, <code>evaluaciones_gemini_flash.csv</code>, <code>evaluaciones_claude_haiku_346.csv</code> y <code>evaluaciones_notebooklm.csv</code>.</li>
-        <li>Doble ciego: la calificación IA queda <b>oculta</b> hasta que el humano envía la suya.</li>
-        <li>Código sincronizado entre GitHub y Apps Script vía <code>clasp</code>.</li>
-      </ul>
-    </div>
-  </section>
-
-  <section>
-    <h2>Recursos del repo</h2>
-    <div class="links">
-      <a class="link-card" href="https://github.com/investigapyrm/evalua_articulos_cientificos">
-        <div class="title">Código fuente en GitHub →</div>
-        <div class="desc">Apps Script (.gs y .html), scripts de setup, documentación.</div>
-      </a>
-      <a class="link-card" href="https://github.com/investigapyrm/evalua_articulos_cientificos/blob/main/README.md">
-        <div class="title">README →</div>
-        <div class="desc">Resumen del proyecto, variables y métricas.</div>
-      </a>
-      <a class="link-card" href="https://github.com/investigapyrm/evalua_articulos_cientificos/blob/main/DEPLOY.md">
-        <div class="title">DEPLOY →</div>
-        <div class="desc">Pasos para clonar y desplegar tu propia copia.</div>
-      </a>
-      <a class="link-card" href="https://github.com/investigapyrm/evalua_articulos_cientificos/blob/main/docs/arquitectura.md">
-        <div class="title">Arquitectura →</div>
-        <div class="desc">Diagrama, flujo doble ciego y persistencia.</div>
-      </a>
-      <a class="link-card" href="https://github.com/investigapyrm/evalua_articulos_cientificos/blob/main/data/articulos_auditables_346.csv">
-        <div class="title">CSV de artículos auditables →</div>
-        <div class="desc">346 PDFs auditables con sus binarios A, B, C y veredicto IA.</div>
-      </a>
-      <a class="link-card" href="https://github.com/investigapyrm/evalua_articulos_cientificos/blob/main/data/comparacion_codex_gemini_claude.csv">
-        <div class="title">Comparación Codex/Gemini/Claude →</div>
-        <div class="desc">Tabla completa por pdf_id con A, B, C, D y estado de acuerdo.</div>
-      </a>
-      <a class="link-card" href="https://github.com/investigapyrm/evalua_articulos_cientificos/blob/main/data/comparacion_notebooklm_codex_gemini_claude.csv">
-        <div class="title">Comparación NotebookLM/modelos →</div>
-        <div class="desc">Tabla auxiliar para contraste entre evaluaciones automatizadas.</div>
-      </a>
-    </div>
-  </section>
-
-  <section>
-    <h2>Cita</h2>
-    <div class="card">
-      <p style="margin:0;">
-        InvestigapyRM. (2026). <em>evalua_articulos_cientificos: aplicación web para revisión
-        trazable de artículos científicos</em>. GitHub.
-      </p>
-    </div>
-  </section>
-
-</main>
-
-<footer>
-  <div class="container">
-    Proyecto de auditoría metodológica · 2026 ·
-    <a href="https://github.com/investigapyrm/evalua_articulos_cientificos">repositorio</a>
-  </div>
-</footer>
-
+  <script src="app.js"></script>
 </body>
 </html>
