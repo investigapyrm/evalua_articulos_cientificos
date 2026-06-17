@@ -184,3 +184,27 @@
 
 * Mantener dos superficies claramente separadas: evidencia publica en Pages y captura central en Apps Script.
 * Si cambia la URL de la app central, actualizar solo `site-config.js`.
+
+## 2026-06-17 08:32
+
+### Objetivo de la intervencion
+
+* Quitar la duplicacion de los botones de juzgamiento en el panel lateral de `auditor.html`.
+
+### Diagnostico inicial
+
+* La vista `auditor.html` mostraba el protocolo A/B/C/D dos veces: una maqueta en la barra lateral y el formulario real en el panel principal.
+
+### Acciones realizadas
+
+* Se elimino del sidebar la seccion `Botones de juzgamiento`.
+* Se mantuvo el formulario operativo de juzgamiento solamente en la zona principal del caso.
+
+### Archivos modificados
+
+* `auditor.html`
+
+### Resultados verificados
+
+* La vista auditor ya no repite el protocolo en el lateral.
+* El usuario conserva registro, avance, cola de casos y el formulario principal sin ruido duplicado.
