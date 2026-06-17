@@ -54,7 +54,7 @@ http://localhost:8016/
    - cargan `346` PDFs publicos;
    - `0` faltantes;
    - se puede abrir al menos un PDF;
-   - `auditor.html` muestre el formulario de ensayo local y el enlace a la app central.
+   - `auditor.html` muestre el formulario de ensayo local, exportacion CSV e importacion CSV sin requerir login.
 
 ## 1. Pre-requisitos
 

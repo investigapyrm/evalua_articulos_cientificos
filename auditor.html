@@ -559,9 +559,10 @@
 
       <div class="hero-links">
         <a class="btn btn-secondary" href="./">Volver al catalogo</a>
-        <a id="hero-central-link" class="btn" href="#" target="_blank" rel="noopener">Abrir app con guardado central</a>
+        <button id="copy-reviewer-link-top" class="btn" type="button">Copiar enlace del auditor</button>
         <a id="hero-repo-link" class="btn btn-secondary" href="#" target="_blank" rel="noopener">Repositorio</a>
         <button id="export-csv-top" class="btn btn-secondary" type="button">Exportar mis guardados</button>
+        <button id="import-csv-top" class="btn btn-secondary" type="button">Importar guardados</button>
       </div>
     </section>
 
@@ -587,6 +588,7 @@
               <button class="btn" type="submit">Guardar perfil local</button>
               <button id="clear-profile" class="btn btn-secondary" type="button">Cambiar auditor</button>
             </div>
+            <div class="footer-note">Esta appweb funciona sin login y guarda localmente en este navegador.</div>
           </form>
         </section>
 
@@ -602,6 +604,7 @@
             <button id="pick-next" class="btn btn-secondary" type="button">Siguiente pendiente</button>
             <button id="pick-random" class="btn btn-secondary" type="button">Caso aleatorio</button>
             <button id="export-csv-side" class="btn btn-secondary" type="button">Exportar CSV</button>
+            <button id="import-csv-side" class="btn btn-secondary" type="button">Importar CSV</button>
           </div>
         </section>
 
@@ -630,7 +633,7 @@
             </div>
             <div class="viewer-tools">
               <a id="detail-catalog-link" class="btn btn-secondary" href="./" rel="noopener">Ver en catalogo</a>
-              <a id="central-case-link" class="btn" href="#" target="_blank" rel="noopener">Auditar con guardado central</a>
+              <button id="copy-case-link" class="btn" type="button">Copiar enlace de este caso</button>
               <a id="open-pdf-link" class="btn btn-secondary" href="#" target="_blank" rel="noopener">Abrir PDF</a>
               <div class="segmented" aria-label="Tamano del visor PDF">
                 <button type="button" class="viewer-size is-active" data-size="medium">Medio</button>
@@ -705,10 +708,10 @@
 
           <div class="compare-grid">
             <div class="compare-card">
-              <h4>Que guarda esta vista</h4>
+              <h4>Acceso para revisores</h4>
               <p>
-                Guarda tus ensayos en este navegador y te deja exportarlos en CSV.
-                Si quieres registrar el juicio en la base central compartida, usa el boton azul de auditoria.
+                Guarda tus ensayos en este navegador y te deja exportarlos o importarlos en CSV.
+                No requiere login ni acceso a Google Apps Script para funcionar.
               </p>
             </div>
             <div id="post-save-compare" class="compare-card" hidden>
@@ -743,6 +746,7 @@
     </div>
   </div>
 
+  <input id="import-csv-input" type="file" accept=".csv,text/csv" hidden>
   <script src="site-config.js"></script>
   <script src="auditor.js"></script>
 </body>

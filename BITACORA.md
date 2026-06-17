@@ -208,3 +208,63 @@
 
 * La vista auditor ya no repite el protocolo en el lateral.
 * El usuario conserva registro, avance, cola de casos y el formulario principal sin ruido duplicado.
+
+## 2026-06-17 09:05
+
+### Objetivo de la intervencion
+
+* Garantizar que los auditores externos de la revista puedan usar la appweb sin bloqueo por permisos de Google.
+
+### Diagnostico inicial
+
+* La URL de Apps Script seguia protegida y devolvia `403` para accesos externos.
+* La portada publica y la vista auditora todavia incluian accesos hacia esa app restringida.
+* Faltaba una forma nativa de importar guardados en otra maquina sin depender de login.
+
+### Acciones realizadas
+
+* Se desactivo el uso publico de `centralAuditorUrl` en `site-config.js`.
+* Se simplifico la portada publica para que el flujo externo apunte solo a `auditor.html`.
+* Se retiro del detalle de cada caso el enlace a la app restringida.
+* Se actualizo `auditor.html` para:
+  * copiar enlace del auditor;
+  * copiar enlace del caso;
+  * exportar e importar guardados CSV;
+  * explicitar que funciona sin login.
+* Se actualizo `auditor.js` para:
+  * importar CSV;
+  * precargar `reviewer` y `case` desde la URL;
+  * operar completamente en Pages sin depender de Apps Script.
+* Se ajustaron `README.md` y `DEPLOY.md` para documentar este modo de acceso publico sin login.
+
+### Archivos modificados
+
+* `site-config.js`
+* `index.html`
+* `app.js`
+* `auditor.html`
+* `auditor.js`
+* `README.md`
+* `DEPLOY.md`
+* `BITACORA.md`
+
+### Resultados verificados
+
+* La portada publica ya no dirige al GAS restringido.
+* `auditor.html?reviewer=Auditor%20Revista&case=335` carga correctamente y muestra el flujo de juzgamiento completo.
+* La appweb publica ya exporta e importa CSV para continuidad entre equipos.
+
+### Pruebas realizadas
+
+* `node --check app.js`
+* `node --check auditor.js`
+* capturas Playwright de portada y `auditor.html` con auditor prellenado
+
+### Riesgos
+
+* El guardado para auditores externos sigue siendo local al navegador hasta consolidar manualmente los CSV.
+
+### Recomendaciones
+
+* Enviar a revisores externos enlaces directos de `auditor.html` con `reviewer=` y, si corresponde, `case=`.
+* Usar la app de Apps Script solo como superficie interna o administrativa mientras mantenga restricciones de acceso.

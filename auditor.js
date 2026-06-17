@@ -113,6 +113,7 @@ function badge(label, tone = 'muted') {
 }
 
 function centralAuditorUrl(record = null) {
+  if (!window.SITE_CONFIG?.centralAuditorEnabled) return '';
   const raw = window.SITE_CONFIG?.centralAuditorUrl || '';
   if (!raw) return '';
   try {
@@ -129,14 +130,6 @@ function centralAuditorUrl(record = null) {
 function syncStaticLinks() {
   const repoHref = window.SITE_CONFIG?.publicRepoUrl || 'https://github.com/investigapyrm/evalua_articulos_cientificos';
   document.getElementById('hero-repo-link').href = repoHref;
-  const central = centralAuditorUrl();
-  const topLink = document.getElementById('hero-central-link');
-  if (central) topLink.href = central;
-  else {
-    topLink.removeAttribute('href');
-    topLink.classList.add('btn-secondary');
-    topLink.textContent = 'Configurar URL central';
-  }
 }
 
 function syncViewerHeight() {
@@ -303,9 +296,6 @@ function renderCase() {
   document.getElementById('case-meta').textContent = formatCaseMeta(record);
   document.getElementById('detail-catalog-link').href = `./?case=${record.pdf_id}`;
   document.getElementById('open-pdf-link').href = record.pdf_public_path || '#';
-  document.getElementById('central-case-link').href = centralAuditorUrl(record) || '#';
-  const centralTop = document.getElementById('hero-central-link');
-  if (centralTop) centralTop.href = centralAuditorUrl(record) || '#';
   const alert = document.getElementById('case-alert');
   if (getJudgmentForCase(record.pdf_id)) {
     alert.hidden = false;
@@ -459,7 +449,7 @@ function exportJudgmentsCsv() {
     return;
   }
   const headers = ['reviewer_name', 'reviewer_affiliation', 'pdf_id', 'case_label', 'pdf_nombre', 'A', 'B', 'C', 'D', 'notes', 'updated_at'];
-  const escapeCsv = (value) => `"${String(value ?? '').replace(/"/g, '""')}"`;
+  const escapeCsv = (value) => `"${String(value ?? '').replace(/\r?\n/g, ' ').replace(/"/g, '""')}"`;
   const csv = [
     headers.join(','),
     ...mine.map((item) => headers.map((header) => escapeCsv(item[header])).join(',')),
@@ -474,6 +464,102 @@ function exportJudgmentsCsv() {
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
+}
+
+function parseCsvLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const char = line[i];
+    if (char === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current);
+  return result;
+}
+
+function importJudgmentsCsv(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const text = String(reader.result || '').trim();
+    if (!text) {
+      document.getElementById('save-status').textContent = 'El archivo CSV esta vacio.';
+      return;
+    }
+    const lines = text.split(/\r?\n/).filter(Boolean);
+    if (lines.length < 2) {
+      document.getElementById('save-status').textContent = 'El CSV no contiene filas para importar.';
+      return;
+    }
+    const headers = parseCsvLine(lines[0]);
+    const expected = ['reviewer_name', 'reviewer_affiliation', 'pdf_id', 'case_label', 'pdf_nombre', 'A', 'B', 'C', 'D', 'notes', 'updated_at'];
+    const missing = expected.filter((key) => !headers.includes(key));
+    if (missing.length) {
+      document.getElementById('save-status').textContent = `El CSV no tiene estas columnas: ${missing.join(', ')}`;
+      return;
+    }
+    const imported = [];
+    for (const line of lines.slice(1)) {
+      const values = parseCsvLine(line);
+      const row = {};
+      headers.forEach((header, index) => {
+        row[header] = values[index] ?? '';
+      });
+      if (!row.pdf_id || !row.reviewer_name) continue;
+      row.pdf_id = Number(row.pdf_id);
+      row.reviewer_key = `${String(row.reviewer_name).trim().toLowerCase()}|${String(row.reviewer_affiliation || '').trim().toLowerCase()}`;
+      imported.push(row);
+    }
+    if (!imported.length) {
+      document.getElementById('save-status').textContent = 'No se encontraron guardados validos en el CSV.';
+      return;
+    }
+    const index = new Map();
+    auditorState.judgments.forEach((item, position) => {
+      index.set(`${item.reviewer_key}::${item.pdf_id}`, position);
+    });
+    imported.forEach((item) => {
+      const key = `${item.reviewer_key}::${item.pdf_id}`;
+      if (index.has(key)) auditorState.judgments.splice(index.get(key), 1, item);
+      else {
+        auditorState.judgments.push(item);
+        index.set(key, auditorState.judgments.length - 1);
+      }
+    });
+    saveJudgments();
+    if (!auditorState.reviewer && imported[0]) {
+      saveReviewerProfile({
+        name: imported[0].reviewer_name,
+        affiliation: imported[0].reviewer_affiliation || '',
+      });
+    }
+    document.getElementById('save-status').textContent = `Importados ${imported.length} guardados desde CSV.`;
+    if (!auditorState.selectedId && imported[0]) auditorState.selectedId = imported[0].pdf_id;
+    hydrateFormFromSaved();
+    renderAll();
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+function copyText(value, message) {
+  navigator.clipboard.writeText(value).then(() => {
+    document.getElementById('save-status').textContent = message;
+  }).catch(() => {
+    document.getElementById('save-status').textContent = 'No se pudo copiar automaticamente el enlace.';
+  });
 }
 
 function renderAll() {
@@ -540,6 +626,34 @@ function bindEvents() {
     document.getElementById(id).addEventListener('click', exportJudgmentsCsv);
   });
 
+  ['import-csv-top', 'import-csv-side'].forEach((id) => {
+    document.getElementById(id).addEventListener('click', () => {
+      document.getElementById('import-csv-input').click();
+    });
+  });
+
+  document.getElementById('import-csv-input').addEventListener('change', (event) => {
+    importJudgmentsCsv(event.target.files?.[0]);
+    event.target.value = '';
+  });
+
+  document.getElementById('copy-reviewer-link-top').addEventListener('click', () => {
+    const url = new URL(window.location.href);
+    if (auditorState.reviewer?.name) url.searchParams.set('reviewer', auditorState.reviewer.name);
+    if (auditorState.reviewer?.affiliation) url.searchParams.set('affiliation', auditorState.reviewer.affiliation);
+    copyText(url.toString(), 'Enlace del auditor copiado.');
+  });
+
+  document.getElementById('copy-case-link').addEventListener('click', () => {
+    const record = recordById(auditorState.selectedId);
+    if (!record) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('case', String(record.pdf_id));
+    if (auditorState.reviewer?.name) url.searchParams.set('reviewer', auditorState.reviewer.name);
+    if (auditorState.reviewer?.affiliation) url.searchParams.set('affiliation', auditorState.reviewer.affiliation);
+    copyText(url.toString(), `Enlace copiado para ${record.case_label || `#${record.pdf_id}`}.`);
+  });
+
   document.querySelectorAll('.viewer-size').forEach((button) => {
     button.addEventListener('click', () => {
       auditorState.viewerSize = button.dataset.size || 'medium';
@@ -553,6 +667,11 @@ async function bootAuditor() {
   syncViewerHeight();
   bindEvents();
   syncStaticLinks();
+  const reviewer = getQueryParam('reviewer');
+  const affiliation = getQueryParam('affiliation');
+  if (reviewer) {
+    saveReviewerProfile({ name: reviewer, affiliation: affiliation || '' });
+  }
   await loadData();
   chooseDefaultCase();
   hydrateFormFromSaved();

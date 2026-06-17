@@ -17,6 +17,7 @@ const VIEWER_HEIGHTS = {
 };
 
 function centralAuditorUrl(record = null) {
+  if (!window.SITE_CONFIG?.centralAuditorEnabled) return '';
   const raw = window.SITE_CONFIG?.centralAuditorUrl || '';
   if (!raw) return '';
   try {
@@ -313,7 +314,6 @@ function renderDetail() {
         <button class="btn btn-secondary nav-case" type="button" data-nav="random">Otro caso</button>
         <button class="btn btn-secondary nav-case" type="button" data-nav="next">Siguiente caso</button>
         <a class="btn btn-secondary" href="${auditorTrialUrl(record)}">Ensayar este caso</a>
-        <a class="btn btn-secondary" href="${centralAuditorUrl(record) || '#'}" target="_blank" rel="noopener">Auditar con guardado</a>
         ${
           record.pdf_available
             ? `<a class="btn" href="${record.pdf_public_path}" target="_blank" rel="noopener">Abrir PDF</a>
@@ -487,10 +487,7 @@ function bindControls() {
 }
 
 function syncStaticLinks() {
-  const link = document.getElementById('central-auditor-link');
-  if (!link) return;
-  const href = centralAuditorUrl();
-  if (href) link.href = href;
+  return;
 }
 
 function renderHeaderMeta() {
