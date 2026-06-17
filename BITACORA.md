@@ -1,4 +1,4 @@
-## 2026-06-17 04:15
+## 2026-06-17 05:05
 
 ### Proyecto
 
@@ -12,80 +12,84 @@
 
 ### Objetivo de la intervencion
 
-* Alinear el despliegue publico oficial con la version verificable que expone los 346 casos y sus PDFs anonimizados.
+* Alinear los KPIs del sitio publico con las metricas del manuscrito final sometido y retirar de la UI cualquier exposicion de nombres de revisores.
 
 ### Diagnostico inicial
 
-* GitHub Pages estaba activo en la URL oficial, pero seguia mostrando una portada antigua.
-* La app verificable mas completa habia sido publicada en otro repositorio.
-* La documentacion y algunos enlaces internos todavia apuntaban al repo anterior.
+* La app publica mostraba conteos por veredicto IA (`122`, `85`, `49`) que no coinciden con las metricas centrales reportadas por el articulo final.
+* El JSON publico todavia exponia `summary_rows` con nombres de revisores y cada registro incluia el campo `revisor`.
+* La interfaz visible seguia usando la palabra `humano`, mientras que el manuscrito final usa `referencia`.
+* El primer PDF visible tendia a quedar fijado por el orden de origen del catalogo.
 
 ### Acciones realizadas
 
-* Se clono `investigapyrm/evalua_articulos_cientificos` y se sincronizaron los archivos de la app publica vigente.
-* Se incorporaron `app.js`, `public_data/`, `anonymized_pdfs/` y `scripts/`.
-* Se actualizaron `README.md`, `DEPLOY.md`, `index.html`, `apps_script/Code.gs` y `docs/arquitectura.md` para apuntar al repo oficial.
-* Se reemplazo el enlace autoreferencial del `index.html` por el manifiesto publico de anonimización.
-* Se vaciaron `FOLDER_ID` y `SHEET_ID` en `apps_script/Code.gs` para no publicar IDs operativos privados.
+* Se actualizo `scripts/build_public_catalog.py` para:
+  * eliminar `summary_rows` del JSON publico;
+  * renombrar la clave publica `humano` a `referencia`;
+  * retirar el campo `revisor` de cada registro;
+  * incorporar `reference_metrics` con las cifras del manuscrito final:
+    * `231` con muestreo no probabilistico;
+    * `181` con A∩C;
+    * `83` con A∩C sin reconocimiento de limites;
+    * `98` con A∩B∩C;
+    * nota de fuente del manuscrito final local.
+* Se regenero `public_data/auditables_346.json`.
+* Se actualizo `app.js` para:
+  * mostrar KPIs basados en `reference_metrics`;
+  * sustituir `Humano` por `Referencia` en todo el texto visible;
+  * quitar la tabla de comparacion sensible;
+  * agregar navegacion `Caso anterior`, `Otro caso`, `Siguiente caso`;
+  * mezclar el orden del catalogo por sesion para evitar que siempre abra el mismo primer caso.
+* Se actualizo `index.html` para retirar el panel de resumen sensible y dejar una nota corta con las cifras del manuscrito.
 
 ### Archivos modificados
 
-* `.gitignore`
-* `README.md`
-* `DEPLOY.md`
-* `index.html`
 * `app.js`
-* `apps_script/Code.gs`
-* `docs/arquitectura.md`
-* `public_data/anonymized_pdf_manifest.csv`
-* `public_data/anonymized_pdf_manifest.json`
-* `public_data/auditables_346.json`
-* `anonymized_pdfs/*.pdf`
-* `scripts/anonymize_public_pdfs.py`
+* `index.html`
 * `scripts/build_public_catalog.py`
+* `public_data/auditables_346.json`
 * `BITACORA.md`
 
 ### Comandos o scripts ejecutados
 
-* `git clone --depth 1 https://github.com/investigapyrm/evalua_articulos_cientificos.git /tmp/evalua_articulos_cientificos_target`
-* `curl -I -L https://investigapyrm.github.io/evalua_articulos_cientificos/`
+* `python3 scripts/build_public_catalog.py`
+* `node --check app.js`
 * `rsync -av --delete ... califica_articulos_inferenciales/ /tmp/evalua_articulos_cientificos_target/`
-* Verificaciones con `rg`, `diff`, `git status` y `python3 -m http.server`
 
 ### Resultados verificados
 
-* El catalogo JSON contiene `346` registros.
-* Los `346` registros tienen `pdf_is_anonymized = true`.
-* Se generaron `346` PDFs en `anonymized_pdfs/`.
+* El JSON publico ya no contiene `summary_rows`.
+* El JSON publico ya no contiene la clave `humano`; ahora usa `referencia`.
+* El JSON publico ya no expone `revisor`.
+* `public_data/auditables_346.json` mantiene `346` registros y `346` PDFs disponibles.
+* Las metricas publicas quedaron listas para mostrar `231`, `181`, `83` y `98`, coherentes con el manuscrito final.
 
 ### Pruebas realizadas
 
-* Verificacion HTTP de la URL publica oficial.
-* Validacion de conteo de registros y PDFs anonimizados desde `public_data/auditables_346.json`.
-* Revision de enlaces y referencias de repositorio en archivos clave.
+* Validacion sintactica con `node --check app.js`.
+* Regeneracion del catalogo con `records=346 pdfs=346 missing=0`.
+* Verificacion estructural del JSON publico para confirmar ausencia de `summary_rows`, `humano` y `revisor`.
 
 ### Errores o incidentes
 
-* El entorno no tenia `gh`; se trabajo con `git` y `curl`.
-* La copia inicial arrastro una bitacora del repo anterior; se reemplazo por una bitacora propia del repo oficial.
+* El `rsync` desde el repo auxiliar reintrodujo una bitacora con metadatos del repo anterior; se reemplazo por una bitacora propia del repo oficial.
 
 ### Soluciones aplicadas
 
-* Se adopto una publicacion centrada solo en PDFs anonimizados para el sitio abierto.
-* Se dejaron los IDs de Apps Script vacios para evitar exponer configuracion operativa.
+* Se adopto `referencia` como vocabulario publico estable.
+* Se separaron las metricas del manuscrito de los conteos crudos del veredicto IA para evitar contradicciones entre app y articulo.
 
 ### Pendientes
 
-* Hacer commit y push al repo oficial.
-* Esperar la actualizacion de GitHub Pages y verificar la URL final.
-* Revisar manualmente 2 o 3 PDFs de una sola pagina marcados para revision adicional.
+* Empujar este ajuste adicional a `main`.
+* Verificar en GitHub Pages que el cache ya sirva el `index` y el `public_data/auditables_346.json` nuevos.
 
 ### Riesgos
 
-* GitHub Pages puede tardar algunos minutos en reflejar el push.
-* Los 3 casos de una sola pagina siguen dependiendo de una revision manual complementaria si se exige anonimización extrema.
+* GitHub Pages puede demorar algunos minutos adicionales en invalidar cache del `index.html`.
+* El sitio sigue exponiendo evidencia textual de codificacion; si luego se quisiera reducir aun mas el nivel de detalle, habria que definir otra pasada de publicacion.
 
 ### Recomendaciones
 
-* Mantener el manifiesto de anonimización como evidencia publica adjunta al resometimiento.
-* No volver a publicar PDFs originales en la URL abierta.
+* Mantener los KPIs publicos anclados al manuscrito final y no a un resumen auxiliar de revisores parciales.
+* Si se publica un nuevo corte del articulo, actualizar primero `reference_metrics` y luego regenerar el catalogo.

@@ -20,8 +20,31 @@ async function loadData() {
   const res = await fetch('public_data/auditables_346.json');
   if (!res.ok) throw new Error(`No se pudo cargar el catalogo: ${res.status}`);
   state.data = await res.json();
+  state.data.records = shuffleRecords(state.data.records.slice(), getSessionSeed());
   state.filtered = state.data.records.slice();
   if (state.filtered.length) state.selectedId = state.filtered[0].pdf_id;
+}
+
+function getSessionSeed() {
+  const key = 'catalog_random_seed_v1';
+  const cached = sessionStorage.getItem(key);
+  if (cached) return Number(cached);
+  const seed = Math.floor(Math.random() * 2147483647) || 1;
+  sessionStorage.setItem(key, String(seed));
+  return seed;
+}
+
+function shuffleRecords(records, seed) {
+  let current = seed >>> 0;
+  const next = () => {
+    current = (1664525 * current + 1013904223) >>> 0;
+    return current / 4294967296;
+  };
+  for (let i = records.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(next() * (i + 1));
+    [records[i], records[j]] = [records[j], records[i]];
+  }
+  return records;
 }
 
 function uniqueValues(key) {
@@ -54,7 +77,7 @@ function applyFilters() {
     const matchVerdict =
       state.verdict === 'ALL' ||
       record.ia.veredicto === state.verdict ||
-      record.humano.veredicto_ac === state.verdict;
+      record.referencia.veredicto_ac === state.verdict;
     const matchAvailability =
       state.availability === 'ALL' ||
       (state.availability === 'AVAILABLE' && record.pdf_available) ||
@@ -109,29 +132,38 @@ function statCard(label, value, hint = '') {
 
 function renderStats() {
   const meta = state.data.meta;
-  const counts = state.data.stats.ia_verdict_counts;
+  const referenceMetrics = state.data.stats.reference_metrics || {};
   document.getElementById('stats-grid').innerHTML = [
     statCard('Casos auditables', meta.record_count),
     statCard('PDF disponibles', meta.pdf_available_count),
     statCard('PDF faltantes', meta.missing_pdfs.length),
-    statCard('FF clásica IA', counts['FF clasica'] || 0),
-    statCard('FF con reconocimiento IA', counts['FF con reconocimiento'] || 0),
-    statCard('Sin falla relevante IA', counts['Sin falla relevante'] || 0),
+    statCard(
+      'Muestreo no probabilistico referencia',
+      referenceMetrics.a_no_prob?.n ?? '—',
+      referenceMetrics.a_no_prob ? `${String(referenceMetrics.a_no_prob.pct_corpus).replace('.', ',')} % del corpus` : ''
+    ),
+    statCard(
+      'EINR A∩C referencia',
+      referenceMetrics.ac_einr?.n ?? '—',
+      referenceMetrics.ac_einr
+        ? `${String(referenceMetrics.ac_einr.pct_corpus).replace('.', ',')} % del corpus | ${String(referenceMetrics.ac_einr.pct_a_subset).replace('.', ',')} % entre A=Si`
+        : ''
+    ),
+    statCard(
+      'A∩C sin reconocimiento',
+      referenceMetrics.ac_sin_reconocimiento?.n ?? '—',
+      referenceMetrics.ac_sin_reconocimiento
+        ? `${String(referenceMetrics.ac_sin_reconocimiento.pct_a_subset).replace('.', ',')} % entre A=Si`
+        : ''
+    ),
+    statCard(
+      'A∩B∩C con reconocimiento',
+      referenceMetrics.abc_con_reconocimiento?.n ?? '—',
+      referenceMetrics.abc_con_reconocimiento
+        ? `${String(referenceMetrics.abc_con_reconocimiento.pct_a_subset).replace('.', ',')} % entre A=Si`
+        : ''
+    ),
   ].join('');
-
-  const summaryTarget = document.getElementById('summary-table-body');
-  summaryTarget.innerHTML = '';
-  for (const row of state.data.stats.summary_rows) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${row.humano}</td>
-      <td>${row.ia}</td>
-      <td class="right">${row.n}</td>
-      <td class="right">${pct(row.acuerdoD)}</td>
-      <td class="right">${num(row.kappaD)}</td>
-    `;
-    summaryTarget.appendChild(tr);
-  }
 }
 
 function pct(value) {
@@ -152,8 +184,10 @@ function verdictTone(value) {
   if (!value) return 'neutral';
   const low = value.toLowerCase();
   if (low.includes('ff')) return 'danger';
+  if (low.includes('falla fuerte')) return 'danger';
   if (low.includes('debilidad')) return 'warning';
   if (low.includes('sin falla')) return 'success';
+  if (low.includes('no falla')) return 'success';
   if (low.includes('no evaluable')) return 'muted';
   return 'neutral';
 }
@@ -203,6 +237,36 @@ function metricRow(name, human, ia) {
   `;
 }
 
+function currentFilteredIndex() {
+  return state.filtered.findIndex((record) => record.pdf_id === state.selectedId);
+}
+
+function selectRelative(delta) {
+  if (!state.filtered.length) return;
+  const current = currentFilteredIndex();
+  const start = current === -1 ? 0 : current;
+  const nextIndex = (start + delta + state.filtered.length) % state.filtered.length;
+  state.selectedId = state.filtered[nextIndex].pdf_id;
+  renderList();
+  renderDetail();
+}
+
+function selectRandomRecord() {
+  if (!state.filtered.length) return;
+  const current = currentFilteredIndex();
+  if (state.filtered.length === 1) {
+    state.selectedId = state.filtered[0].pdf_id;
+  } else {
+    let nextIndex = current;
+    while (nextIndex === current) {
+      nextIndex = Math.floor(Math.random() * state.filtered.length);
+    }
+    state.selectedId = state.filtered[nextIndex].pdf_id;
+  }
+  renderList();
+  renderDetail();
+}
+
 function renderDetail() {
   const record = state.data.records.find((r) => r.pdf_id === state.selectedId);
   const panel = document.getElementById('detail-panel');
@@ -211,9 +275,9 @@ function renderDetail() {
     return;
   }
 
-  const humanA = record.humano.A == null ? '—' : String(record.humano.A);
-  const humanB = record.humano.B == null ? '—' : String(record.humano.B);
-  const humanC = record.humano.C == null ? '—' : String(record.humano.C);
+  const referenceA = record.referencia.A == null ? '—' : String(record.referencia.A);
+  const referenceB = record.referencia.B == null ? '—' : String(record.referencia.B);
+  const referenceC = record.referencia.C == null ? '—' : String(record.referencia.C);
 
   panel.innerHTML = `
     <div class="detail-head">
@@ -223,6 +287,9 @@ function renderDetail() {
         <p class="detail-meta">${record.revista} · ${record.pais} · ${record.macroarea} · ${record.anio ?? 's/f'}</p>
       </div>
       <div class="detail-actions">
+        <button class="btn btn-secondary nav-case" type="button" data-nav="prev">Caso anterior</button>
+        <button class="btn btn-secondary nav-case" type="button" data-nav="random">Otro caso</button>
+        <button class="btn btn-secondary nav-case" type="button" data-nav="next">Siguiente caso</button>
         ${
           record.pdf_available
             ? `<a class="btn" href="${record.pdf_public_path}" target="_blank" rel="noopener">Abrir PDF</a>
@@ -237,14 +304,14 @@ function renderDetail() {
         <h3>Veredictos</h3>
         <div class="badge-row">
           ${badge(`IA: ${record.ia.veredicto || '—'}`, verdictTone(record.ia.veredicto))}
-          ${badge(`Humano: ${record.humano.veredicto_ac || 'sin carga'}`, verdictTone(record.humano.veredicto_ac))}
+          ${badge(`Referencia: ${record.referencia.veredicto_ac || 'sin carga'}`, verdictTone(record.referencia.veredicto_ac))}
         </div>
         <table class="mini-table">
-          <thead><tr><th>Dimension</th><th class="right">Humano</th><th class="right">IA</th></tr></thead>
+          <thead><tr><th>Dimension</th><th class="right">Referencia</th><th class="right">IA</th></tr></thead>
           <tbody>
-            ${metricRow('A · muestreo no probabilistico', humanA, record.ia.A)}
-            ${metricRow('B · advierte limites', humanB, record.ia.B)}
-            ${metricRow('C · extrapola / infiere', humanC, record.ia.C)}
+            ${metricRow('A · muestreo no probabilistico', referenceA, record.ia.A)}
+            ${metricRow('B · advierte limites', referenceB, record.ia.B)}
+            ${metricRow('C · extrapola / infiere', referenceC, record.ia.C)}
           </tbody>
         </table>
       </section>
@@ -255,21 +322,21 @@ function renderDetail() {
           <dt>PDF publico</dt><dd>${record.pdf_nombre || '—'}</dd>
           <dt>Anonimizado</dt><dd>${record.pdf_is_anonymized ? 'Si' : 'No'}</dd>
           <dt>Estrategia</dt><dd>${record.anonymization?.strategy || '—'}</dd>
-          <dt>Revisor</dt><dd>${record.humano.revisor || '—'}</dd>
-          <dt>Fecha revision</dt><dd>${record.humano.fecha_revision || '—'}</dd>
-          <dt>Pagina o seccion</dt><dd>${record.humano.pagina_o_seccion || '—'}</dd>
-          <dt>Acuerdo IA vs humano</dt><dd>${record.humano.acuerdo_ia_humano_ac || '—'}</dd>
-          <dt>Tipo de discrepancia</dt><dd>${record.humano.tipo_discrepancia || '—'}</dd>
-          <dt>Accion recomendada</dt><dd>${record.humano.accion_recomendada || '—'}</dd>
+          <dt>Fuente de contraste</dt><dd>Codificacion de referencia</dd>
+          <dt>Fecha de revision</dt><dd>${record.referencia.fecha_revision || '—'}</dd>
+          <dt>Pagina o seccion</dt><dd>${record.referencia.pagina_o_seccion || '—'}</dd>
+          <dt>Acuerdo IA vs referencia</dt><dd>${record.referencia.acuerdo_ia_referencia_ac || '—'}</dd>
+          <dt>Tipo de discrepancia</dt><dd>${record.referencia.tipo_discrepancia || '—'}</dd>
+          <dt>Accion recomendada</dt><dd>${record.referencia.accion_recomendada || '—'}</dd>
         </dl>
       </section>
 
       <section class="detail-card detail-card-wide">
-        <h3>Notas de codificacion humana</h3>
-        <div class="text-block"><strong>Muestreo:</strong> ${record.humano.evidencia_muestreo || '—'}</div>
-        <div class="text-block"><strong>Inferencia:</strong> ${record.humano.evidencia_inferencia || '—'}</div>
-        <div class="text-block"><strong>Extrapolacion:</strong> ${record.humano.evidencia_extrapolacion || '—'}</div>
-        <div class="text-block"><strong>Comentario:</strong> ${record.humano.comentario || '—'}</div>
+        <h3>Notas de codificacion de referencia</h3>
+        <div class="text-block"><strong>Muestreo:</strong> ${record.referencia.evidencia_muestreo || '—'}</div>
+        <div class="text-block"><strong>Inferencia:</strong> ${record.referencia.evidencia_inferencia || '—'}</div>
+        <div class="text-block"><strong>Extrapolacion:</strong> ${record.referencia.evidencia_extrapolacion || '—'}</div>
+        <div class="text-block"><strong>Comentario:</strong> ${record.referencia.comentario || '—'}</div>
       </section>
     </div>
 
@@ -300,6 +367,14 @@ function renderDetail() {
       state.viewerSize = btn.dataset.size || 'medium';
       syncViewerHeight();
       renderDetail();
+    });
+  }
+  for (const btn of panel.querySelectorAll('.nav-case')) {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.nav;
+      if (action === 'prev') selectRelative(-1);
+      else if (action === 'next') selectRelative(1);
+      else selectRandomRecord();
     });
   }
 }
@@ -340,7 +415,7 @@ function bindControls() {
   buildSelectOptions(area, uniqueValues('macroarea'), 'Todas las macroareas');
   buildSelectOptions(
     verdict,
-    [...new Set(state.data.records.map((r) => [r.ia.veredicto, r.humano.veredicto_ac]).flat().filter(Boolean))].sort((a, b) =>
+    [...new Set(state.data.records.map((r) => [r.ia.veredicto, r.referencia.veredicto_ac]).flat().filter(Boolean))].sort((a, b) =>
       String(a).localeCompare(String(b), 'es')
     ),
     'Todos los veredictos'

@@ -548,7 +548,7 @@
           <p>
             Catalogo verificable de los 346 casos auditables del estudio sobre generalizacion inferencial
             en revistas sudamericanas de acceso abierto. Cada registro expone trazabilidad metodologica,
-            veredicto IA, contraste humano disponible y acceso directo a la copia publica del PDF.
+            veredicto IA, contraste con la codificacion de referencia y acceso directo a la copia publica del PDF.
           </p>
         </div>
         <div class="hero-meta">
@@ -568,14 +568,18 @@
       </div>
 
       <div class="hero-links">
-        <a class="btn" href="https://github.com/investigapyrm/evalua_articulos_cientificos" target="_blank" rel="noopener">Repositorio</a>
+        <a class="btn" href="https://github.com/diegomezapy/califica_articulos_inferenciales" target="_blank" rel="noopener">Repositorio</a>
         <a class="btn btn-secondary" href="public_data/auditables_346.json" target="_blank" rel="noopener">JSON publico</a>
-        <a class="btn btn-secondary" href="public_data/anonymized_pdf_manifest.json" target="_blank" rel="noopener">Manifiesto de anonimización</a>
+        <a class="btn btn-secondary" href="https://investigapyrm.github.io/evalua_articulos_cientificos/" target="_blank" rel="noopener">Sitio de replicacion citado</a>
         <button id="reset-filters-top" class="btn btn-secondary" type="button">Limpiar filtros</button>
       </div>
       <div id="active-filters" class="footer-note">Sin filtros activos.</div>
 
       <div id="stats-grid" class="stats-grid"></div>
+      <div class="footer-note">
+        Las metricas de referencia replican las cifras del manuscrito final sometido: 231 articulos con A=Si,
+        181 con A∩C, 83 con A∩C sin reconocimiento de limites y 98 con A∩B∩C.
+      </div>
     </section>
 
     <div class="layout">
@@ -621,32 +625,6 @@
         <section class="main-panel">
           <div id="detail-panel" class="detail-panel">
             <div class="placeholder">Cargando catalogo...</div>
-          </div>
-        </section>
-
-        <section class="summary-panel">
-          <div class="panel-head">
-            <h3>Resumen de comparacion humano vs modelos</h3>
-          </div>
-          <div class="summary-body">
-            <div class="table-wrap">
-              <table class="summary-table">
-                <thead>
-                  <tr>
-                    <th>Humano</th>
-                    <th>IA</th>
-                    <th class="right">n</th>
-                    <th class="right">Acuerdo D</th>
-                    <th class="right">Kappa D</th>
-                  </tr>
-                </thead>
-                <tbody id="summary-table-body"></tbody>
-              </table>
-            </div>
-            <div class="footer-note">
-              La tabla resume comparaciones cargadas en archivos publicos del repositorio. El catalogo principal
-              se construye desde `tabla_validacion_humano_vs_ia_auditables_346.csv`.
-            </div>
           </div>
         </section>
       </div>

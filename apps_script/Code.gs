@@ -1,5 +1,5 @@
 /**
- * evalua_articulos_cientificos — backend Apps Script
+ * califica_articulos_inferenciales — backend Apps Script
  *
  * Flujo doble ciego, multi-revisor:
  * 1. La app pide al revisor que se identifique con un nombre (persistido en localStorage).
@@ -11,9 +11,9 @@
  */
 
 // ───────────────────── CONFIG ─────────────────────────────────────────────
-const FOLDER_ID  = '';
-const SHEET_ID   = '';
-const CSV_URL    = 'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/articulos_auditables_346.csv';
+const FOLDER_ID  = '16qV-NvEplMmXI0ZELAr6TW0C05fMw-Jq';
+const SHEET_ID   = '1TU66HYq5_3jiIJ9kLTL-DLrC7Jrhdr3amSACxVnWwPU';
+const CSV_URL    = 'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/articulos_auditables_346.csv';
 
 const HOJA_AUDITABLES     = 'auditables';
 const HOJA_CALIFICACIONES = 'calificaciones';
@@ -170,7 +170,7 @@ function _adminEndpoint(p) {
       if (keep.length) sh.getRange(2, 1, keep.length, sh.getLastColumn()).setValues(keep);
       out.codex_borradas = vals.length - keep.length;
       const r = importarEvaluacionesIA(
-        'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_codex_gpt.csv',
+        'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_codex_gpt.csv',
         'codex_gpt'
       );
       out.importadas = r.ok;
@@ -188,7 +188,7 @@ function _adminEndpoint(p) {
       if (keep.length) sh.getRange(2, 1, keep.length, sh.getLastColumn()).setValues(keep);
       out.gemini_flash_borradas = vals.length - keep.length;
       const r = importarEvaluacionesIA(
-        'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_gemini_flash.csv',
+        'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_gemini_flash.csv',
         'gemini_flash'
       );
       out.importadas = r.ok;
@@ -206,7 +206,7 @@ function _adminEndpoint(p) {
       if (keep.length) sh.getRange(2, 1, keep.length, sh.getLastColumn()).setValues(keep);
       out.claude_haiku_borradas = vals.length - keep.length;
       const r = importarEvaluacionesIA(
-        'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_claude_haiku_346.csv',
+        'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_claude_haiku_346.csv',
         'claude_haiku'
       );
       out.importadas = r.ok;
@@ -224,7 +224,7 @@ function _adminEndpoint(p) {
       if (keep.length) sh.getRange(2, 1, keep.length, sh.getLastColumn()).setValues(keep);
       out.notebooklm_borradas = vals.length - keep.length;
       const r = importarEvaluacionesIA(
-        'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_notebooklm.csv',
+        'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_notebooklm.csv',
         'notebooklm'
       );
       out.importadas = r.ok;
@@ -234,7 +234,7 @@ function _adminEndpoint(p) {
       // NotebookLM, marcado en notas para no confundir con observaciones reales.
       out.imputadas_borradas = _borrarFilasImputadasDiegoNotebookLM_();
       const r = importarEvaluacionesIA(
-        'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/imputacion_diego_meza_notebooklm_proporcional.csv',
+        'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/imputacion_diego_meza_notebooklm_proporcional.csv',
         'DIEGO MEZA'
       );
       out.importadas = r.ok;
@@ -245,19 +245,19 @@ function _adminEndpoint(p) {
       const modelos = [
         {
           revisor: 'codex_gpt',
-          url: 'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_codex_gpt.csv'
+          url: 'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_codex_gpt.csv'
         },
         {
           revisor: 'gemini_flash',
-          url: 'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_gemini_flash.csv'
+          url: 'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_gemini_flash.csv'
         },
         {
           revisor: 'claude_haiku',
-          url: 'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_claude_haiku_346.csv'
+          url: 'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_claude_haiku_346.csv'
         },
         {
           revisor: 'notebooklm',
-          url: 'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_notebooklm.csv'
+          url: 'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_notebooklm.csv'
         }
       ];
       out.modelos = {};
@@ -283,7 +283,7 @@ function _adminEndpoint(p) {
       if (keep.length) sh.getRange(2, 1, keep.length, sh.getLastColumn()).setValues(keep);
       out.claude_borradas = vals.length - keep.length;
       const r = importarEvaluacionesIA(
-        'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_claude_piloto.csv',
+        'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_claude_piloto.csv',
         'claude'
       );
       out.importadas = r.ok;
@@ -307,19 +307,19 @@ function importar_modelos_346() {
   const modelos = [
     {
       revisor: 'codex_gpt',
-      url: 'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_codex_gpt.csv'
+      url: 'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_codex_gpt.csv'
     },
     {
       revisor: 'gemini_flash',
-      url: 'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_gemini_flash.csv'
+      url: 'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_gemini_flash.csv'
     },
     {
       revisor: 'claude_haiku',
-      url: 'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_claude_haiku_346.csv'
+      url: 'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_claude_haiku_346.csv'
     },
     {
       revisor: 'notebooklm',
-      url: 'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_notebooklm.csv'
+      url: 'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_notebooklm.csv'
     }
   ];
   const out = {};
@@ -338,7 +338,7 @@ function importar_modelos_346() {
 
 // ───────────────────── SETUP / MIGRACIÓN ─────────────────────────────────
 function setup_inicial() {
-  const ss = SpreadsheetApp.create('evalua_articulos_cientificos - calificaciones');
+  const ss = SpreadsheetApp.create('califica_articulos_inferenciales — calificaciones');
   Logger.log('SHEET creado: ' + ss.getId() + ' (pega este ID en SHEET_ID)');
 
   const resp = UrlFetchApp.fetch(CSV_URL, { muteHttpExceptions: true });
@@ -1211,11 +1211,11 @@ function unificar_revisor(nombreReal) {
  */
 function importar_pilotos_claude_y_gemini2() {
   importarEvaluacionesIA(
-    'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_claude_piloto.csv',
+    'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_claude_piloto.csv',
     'claude'
   );
   importarEvaluacionesIA(
-    'https://raw.githubusercontent.com/investigapyrm/evalua_articulos_cientificos/main/data/evaluaciones_gemini_v2_piloto.csv',
+    'https://raw.githubusercontent.com/diegomezapy/califica_articulos_inferenciales/main/data/evaluaciones_gemini_v2_piloto.csv',
     'gemini_v2'
   );
 }

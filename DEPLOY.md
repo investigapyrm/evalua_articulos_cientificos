@@ -1,10 +1,10 @@
-# Despliegue de evalua_articulos_cientificos
+# Despliegue de califica_articulos_inferenciales
 
 Pasos para tener la app funcionando desde cero, sincronizada con este repo de GitHub.
 
 ## 0. Sitio publico de verificacion para la revista
 
-Antes de pensar en Apps Script, el repositorio ya puede publicar un sitio estatico con los `346` casos y sus PDFs anonimizados.
+Antes de pensar en Apps Script, el repositorio ya puede publicar un sitio estatico con los `346` casos y sus PDFs.
 
 ### Generacion
 
@@ -24,6 +24,7 @@ records=346 pdfs=346 missing=0
 Esto genera:
 
 - `public_data/auditables_346.json`
+- `public_pdfs/*.pdf`
 - `anonymized_pdfs/*.pdf`
 - `public_data/anonymized_pdf_manifest.csv`
 
@@ -43,13 +44,13 @@ http://localhost:8016/
 
 ### Publicacion en GitHub Pages
 
-1. Confirmar que `index.html`, `app.js`, `public_data/` y `anonymized_pdfs/` quedaron actualizados.
+1. Confirmar que `index.html`, `app.js`, `public_data/` y `public_pdfs/` quedaron actualizados.
 2. Hacer commit y push del branch correspondiente.
 3. En GitHub: `Settings -> Pages`.
 4. Publicar desde `main` y `/root`, o desde el branch que uses para Pages.
 5. Verificar en la URL publica que:
    - cargan `346` casos;
-   - cargan `346` PDFs anonimizados;
+   - cargan `346` PDFs publicos;
    - `0` faltantes;
    - se puede abrir al menos un PDF.
 
@@ -59,8 +60,8 @@ http://localhost:8016/
 - [Node.js](https://nodejs.org) instalado (necesario para `clasp`).
 - Repo clonado localmente:
   ```bash
-  git clone https://github.com/investigapyrm/evalua_articulos_cientificos.git
-  cd evalua_articulos_cientificos
+  git clone https://github.com/diegomezapy/califica_articulos_inferenciales.git
+  cd califica_articulos_inferenciales
   ```
 
 ## 2. Subir el CSV de ground truth a Drive
@@ -96,7 +97,7 @@ Script API" en ON).
 
 ```bash
 cd apps_script
-clasp create --type webapp --title "evalua_articulos_cientificos"
+clasp create --type webapp --title "califica_articulos_inferenciales"
 clasp push -f
 ```
 

@@ -21,6 +21,37 @@ OUTPUT_DATA_DIR = REPO_ROOT / "public_data"
 OUTPUT_PDF_DIR = REPO_ROOT / "public_pdfs"
 OUTPUT_JSON = OUTPUT_DATA_DIR / "auditables_346.json"
 
+# Metricas declaradas por el manuscrito final sometido a DADOS.
+# Fuente local de control: 03_TESIS/RESOMETIMIENTO_DADOS_2026-06-16/
+# documentos_editables/manuscrito_principal_anonimizado_dados.html
+ARTICLE_REFERENCE_METRICS = {
+    "corpus_auditables": {"n": 346, "label": "Casos auditables"},
+    "pdf_disponibles": {"n": 346, "label": "PDF disponibles"},
+    "pdf_faltantes": {"n": 0, "label": "PDF faltantes"},
+    "a_no_prob": {"n": 231, "pct_corpus": 66.8, "label": "Muestreo no probabilistico"},
+    "b_reconoce_limites": {"n": 165, "pct_corpus": 47.7, "label": "Reconocimiento de limites"},
+    "c_extrapola": {"n": 263, "pct_corpus": 76.0, "label": "Extrapolacion a dominio amplio"},
+    "ac_einr": {
+        "n": 181,
+        "pct_corpus": 52.3,
+        "pct_a_subset": 78.4,
+        "label": "EINR A∩C",
+    },
+    "ac_sin_reconocimiento": {
+        "n": 83,
+        "pct_a_subset": 35.9,
+        "pct_corpus": 24.0,
+        "label": "A∩C sin reconocimiento",
+    },
+    "abc_con_reconocimiento": {
+        "n": 98,
+        "pct_a_subset": 42.4,
+        "pct_corpus": 28.3,
+        "label": "A∩B∩C con reconocimiento",
+    },
+    "source_note": "Metricas tomadas del manuscrito final sometido a DADOS (17 June 2026 local workspace snapshot).",
+}
+
 
 def to_text(value: str | None) -> str:
     return (value or "").strip()
@@ -46,15 +77,22 @@ def to_num(value: str | None):
         return None
 
 
+def normalize_reference_text(value: str | None) -> str:
+    text = to_text(value)
+    if not text:
+        return ""
+    replacements = {
+        "Corregir a juicio humano:": "Corregir segun codificacion de referencia:",
+        "juicio humano": "codificacion de referencia",
+        "Juicio humano": "Codificacion de referencia",
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text
+
+
 def load_rows():
     with SOURCE_CSV.open("r", encoding="utf-8-sig", newline="") as fh:
-        return list(csv.DictReader(fh))
-
-
-def load_summary():
-    if not SUMMARY_CSV.exists():
-        return []
-    with SUMMARY_CSV.open("r", encoding="utf-8-sig", newline="") as fh:
         return list(csv.DictReader(fh))
 
 
@@ -133,7 +171,7 @@ def record_from_row(row: dict[str, str], pdf_path: Path | None, anon_row: dict[s
             "motivo": to_text(row.get("motivo_ia")),
             "confianza": to_num(row.get("confianza_ia")),
         },
-        "humano": {
+        "referencia": {
             "aplicable": to_text(row.get("aplicable_humano")),
             "A": to_num(row.get("A_humano_muestreo_no_prob")),
             "B": to_num(row.get("B_humano_advierte_limites")),
@@ -143,12 +181,11 @@ def record_from_row(row: dict[str, str], pdf_path: Path | None, anon_row: dict[s
             "evidencia_inferencia": to_text(row.get("evidencia_inferencia_humano")),
             "evidencia_extrapolacion": to_text(row.get("evidencia_extrapolacion_humano")),
             "pagina_o_seccion": to_text(row.get("pagina_o_seccion_evidencia")),
-            "comentario": to_text(row.get("comentario_humano_actual")),
-            "revisor": to_text(row.get("revisor")),
+            "comentario": normalize_reference_text(row.get("comentario_humano_actual")),
             "fecha_revision": to_text(row.get("fecha_revision")),
-            "acuerdo_ia_humano_ac": to_text(row.get("acuerdo_ia_humano_AC")),
-            "tipo_discrepancia": to_text(row.get("tipo_discrepancia")),
-            "accion_recomendada": to_text(row.get("accion_recomendada")),
+            "acuerdo_ia_referencia_ac": to_text(row.get("acuerdo_ia_humano_AC")),
+            "tipo_discrepancia": normalize_reference_text(row.get("tipo_discrepancia")),
+            "accion_recomendada": normalize_reference_text(row.get("accion_recomendada")),
         },
     }
 
@@ -162,7 +199,6 @@ def copy_pdf(src: Path, dst: Path):
 
 def build():
     rows = load_rows()
-    summary_rows = load_summary()
     anon_map = load_anonymized_map()
 
     OUTPUT_DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -180,7 +216,7 @@ def build():
         records.append(record_from_row(row, src, anon_map.get(pdf_name)))
 
     verdict_counts = Counter(r["ia"]["veredicto"] for r in records)
-    human_counts = Counter(r["humano"]["veredicto_ac"] for r in records if r["humano"]["veredicto_ac"])
+    reference_counts = Counter(r["referencia"]["veredicto_ac"] for r in records if r["referencia"]["veredicto_ac"])
     country_counts = Counter(r["pais"] for r in records)
     area_counts = Counter(r["macroarea"] for r in records)
 
@@ -190,14 +226,14 @@ def build():
             "record_count": len(records),
             "pdf_available_count": sum(1 for r in records if r["pdf_available"]),
             "missing_pdfs": missing,
-            "source_csv": str(SOURCE_CSV.relative_to(WORKSPACE_ROOT)),
+            "source_note": "Catalogo publico derivado de la tabla maestra interna de referencia vs IA y alineado con el manuscrito final sometido a DADOS.",
         },
         "stats": {
             "ia_verdict_counts": verdict_counts,
-            "human_verdict_counts": human_counts,
+            "reference_verdict_counts": reference_counts,
             "country_counts": country_counts,
             "macroarea_counts": area_counts,
-            "summary_rows": summary_rows,
+            "reference_metrics": ARTICLE_REFERENCE_METRICS,
         },
         "records": records,
     }

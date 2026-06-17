@@ -1,7 +1,8 @@
-# evalua_articulos_cientificos
+# califica_articulos_inferenciales
 
-> **Verificador publico estatico:** GitHub Pages del mismo repositorio, con `index.html`, `app.js`, `public_data/auditables_346.json` y `anonymized_pdfs/`.
-> **🌐 Sitio público:** <https://investigapyrm.github.io/evalua_articulos_cientificos/>
+> **Verificador publico estatico:** GitHub Pages del mismo repositorio, con `index.html`, `app.js`, `public_data/auditables_346.json` y `public_pdfs/`.
+> **🌐 App pública:** <https://script.google.com/macros/s/AKfycby-SQDUuxxpHl2ApM3xosLbFrxAvxxyZY7yFRhU7fytgqn_NS1MO0uqq5piKcHTc1fLvg/exec>
+> _(Cualquier usuario con cuenta de Google. Identifícate como revisor al entrar; las calificaciones se guardan por nombre)._
 
 App web de evaluación humana **doble ciego** y comparación multi-modelo para los 346 artículos auditables del estudio
 **Errores Inferenciales Críticos en Estudios Cuantitativos Sudamericanos** (DOAJ 2025).
@@ -21,7 +22,7 @@ Esta es la superficie pensada para compartir evidencia verificable a terceros, i
 - no requiere Google Apps Script;
 - no requiere login;
 - expone los `346` registros auditables;
-- permite abrir y descargar cada PDF anonimizado del sitio;
+- permite abrir y descargar cada PDF copiado al sitio;
 - muestra metadatos, veredictos IA, contraste humano y trazabilidad;
 - se alimenta desde `04_INVESTIGACION_REPO/tabla_validacion_humano_vs_ia_auditables_346.csv`.
 
@@ -32,12 +33,13 @@ Archivos clave:
 - `scripts/build_public_catalog.py`
 - `scripts/anonymize_public_pdfs.py`
 - `public_data/auditables_346.json`
+- `public_pdfs/*.pdf`
 - `anonymized_pdfs/*.pdf`
 - `public_data/anonymized_pdf_manifest.csv`
 
 ### 2. App privada de calificacion
 
-La Web App de Google Apps Script sigue siendo la superficie privada para captura y comparacion interactiva de revisores.
+La Web App de Google Apps Script sigue siendo la superficie para captura y comparacion interactiva de revisores.
 
 ## Stack
 
@@ -50,7 +52,7 @@ La Web App de Google Apps Script sigue siendo la superficie privada para captura
 ## Estructura del repositorio
 
 ```
-evalua_articulos_cientificos/
+califica_articulos_inferenciales/
 ├── apps_script/
 │   ├── appsscript.json          # manifest con scopes Drive + Sheets
 │   ├── Code.gs                  # backend
@@ -118,7 +120,7 @@ Criterio actual:
 - PDFs de una sola pagina: se aplica redaccion parcial de la primera pagina y quedan marcados para revision manual en el manifiesto.
 - Siempre se eliminan metadatos embebidos del PDF.
 
-`build_public_catalog.py` ahora prefiere automaticamente estas copias anonimizadas cuando el manifiesto existe. En este repositorio publicado se distribuyen solo las salidas anonimizadas.
+`build_public_catalog.py` ahora prefiere automaticamente estas copias anonimizadas cuando el manifiesto existe.
 
 ## Variables operacionales calificadas
 
